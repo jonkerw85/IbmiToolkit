@@ -1416,7 +1416,7 @@ class Toolkit implements ToolkitInterface
      * @param string $ccsidBefore
      * @param string $ccsidAfter
      * @param bool $useHex
-     * @return CharParam
+     * @return \ToolkitApi\CharParam
      */
     static function AddParameterChar($io, $size , $comment, $varName = '', $value= '', $varying = 'off',$dimension = 0,
                                       $by='', $isArray = false, $ccsidBefore = '', $ccsidAfter = '', $useHex = false)
@@ -1431,7 +1431,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return Int32Param
+     * @return \ToolkitApi\Int32Param
      */
     static function AddParameterInt32($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1442,7 +1442,7 @@ class Toolkit implements ToolkitInterface
      * @param $comment
      * @param string $varName
      * @param $labelFindLen
-     * @return SizeParam
+     * @return \ToolkitApi\SizeParam
      */
     static function AddParameterSize($comment, $varName = '', $labelFindLen = 0)
     {
@@ -1453,7 +1453,7 @@ class Toolkit implements ToolkitInterface
      * @param $comment
      * @param string $varName
      * @param $labelFindLen
-     * @return SizePackParam
+     * @return \ToolkitApi\SizePackParam
      */
     static function AddParameterSizePack($comment, $varName = '', $labelFindLen = 0)
     {
@@ -1466,7 +1466,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return Int8Param
+     * @return \ToolkitApi\Int8Param
      */
     public static function AddParameterInt8($io, $comment, $varName='', $value='', $dimension=0)
     {
@@ -1479,7 +1479,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return Int16Param
+     * @return \ToolkitApi\Int16Param
      */
     public static function AddParameterInt16($io, $comment, $varName='', $value='', $dimension=0)
     {
@@ -1492,7 +1492,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return Int64Param
+     * @return \ToolkitApi\Int64Param
      */
     static function AddParameterInt64($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1505,7 +1505,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return UInt8Param
+     * @return \ToolkitApi\UInt8Param
      */
     public static function AddParameterUInt8($io, $comment, $varName='', $value='', $dimension=0)
     {
@@ -1518,7 +1518,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return UInt16Param
+     * @return \ToolkitApi\UInt16Param
      */
     public static function AddParameterUInt16($io, $comment, $varName='', $value='', $dimension=0)
     {
@@ -1531,7 +1531,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return UInt32Param
+     * @return \ToolkitApi\UInt32Param
      */
     static function AddParameterUInt32($io, $comment, $varName = '', $value = '', $dimension =0)
     {
@@ -1544,7 +1544,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return UInt64Param
+     * @return \ToolkitApi\UInt64Param
      */
     static function AddParameterUInt64($io, $comment, $varName = '', $value='', $dimension=0)
     {
@@ -1557,7 +1557,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return FloatParam
+     * @return \ToolkitApi\FloatParam
      */
     static function AddParameterFloat($io, $comment, $varName = '', $value='', $dimension=0)
     {
@@ -1570,7 +1570,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return RealParam
+     * @return \ToolkitApi\RealParam
      */
     static function AddParameterReal($io, $comment, $varName = '', $value='', $dimension=0)
     {
@@ -1585,7 +1585,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param mixed $value
      * @param int $dimension
-     * @return PackedDecParam
+     * @return \ToolkitApi\PackedDecParam
      */
     static function AddParameterPackDec($io, $length ,$scale , $comment, $varName = '', $value='', $dimension=0)
     {
@@ -1600,7 +1600,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param mixed $value
      * @param int $dimension
-     * @return ZonedParam
+     * @return \ToolkitApi\ZonedParam
      */
     static function AddParameterZoned($io, $length ,$scale , $comment, $varName = '', $value='', $dimension=0)
     {
@@ -1612,7 +1612,7 @@ class Toolkit implements ToolkitInterface
      *
      * @param $size
      * @param string $comment
-     * @return HoleParam
+     * @return \ToolkitApi\HoleParam
      */
     static function AddParameterHole($size , $comment='hole')
     {
@@ -1626,7 +1626,7 @@ class Toolkit implements ToolkitInterface
      * @param string $varName
      * @param string $value
      * @param int $dimension
-     * @return BinParam
+     * @return \ToolkitApi\BinParam
      */
     static function AddParameterBin($io, $size , $comment, $varName = '', $value='',$dimension =0)
     {
