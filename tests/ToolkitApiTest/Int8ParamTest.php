@@ -1,4 +1,5 @@
 <?php
+
 namespace ToolkitApiTest;
 
 use PHPUnit\Framework\TestCase;
@@ -6,8 +7,7 @@ use ToolkitApi\Int8Param;
 use ToolkitApi\ProgramParameter;
 
 /**
- * Class Int8ParamTest
- * @package ToolkitApiTest
+ * Class Int8ParamTest.
  */
 final class Int8ParamTest extends TestCase
 {

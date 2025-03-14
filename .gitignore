@@ -13,3 +13,4 @@ phpunit.xml
 vendor/
 tests/config/db.config.php
 .phpunit.result.cache
+.php-cs-fixer.cache

@@ -1,4 +1,5 @@
 <?php
+
 namespace ToolkitApiTest;
 
 use PHPUnit\Framework\TestCase;
@@ -6,13 +7,12 @@ use ToolkitApi\BinParam;
 use ToolkitApi\ProgramParameter;
 
 /**
- * Class ProgramParameterTest
- * @package ToolkitApiTest
+ * Class ProgramParameterTest.
  */
 final class ProgramParameterTest extends TestCase
 {
     /**
-     * @var ProgramParameter $programParameter
+     * @var ProgramParameter
      */
     protected $programParameter;
     protected $type;
@@ -51,7 +51,7 @@ final class ProgramParameterTest extends TestCase
     public function testCanGetParameterProperties()
     {
         $data1 = $this->programParameter->getParamProperities();
-        $data2 = array(
+        $data2 = [
             'type' => $this->type,
             'io' => $this->io,
             'comment' => $this->comment,
@@ -68,7 +68,7 @@ final class ProgramParameterTest extends TestCase
             'ccsidBefore' => '',
             'ccsidAfter' => '',
             'useHex' => false,
-        );
+        ];
 
         $this->assertEquals($data1, $data2);
     }
@@ -80,8 +80,6 @@ final class ProgramParameterTest extends TestCase
 
         $this->assertEquals($data1, $data2);
     }
-
-
 }
 
 /*class DataStructureTest extends \PHPUnit_Framework_TestCase
@@ -153,18 +151,17 @@ class HoleParamTest extends \PHPUnit_Framework_TestCase
 }*/
 
 /**
- * Class BinParamTest
- * @package ToolkitApiTest
+ * Class BinParamTest.
  */
 final class BinParamTest extends TestCase
 {
     /**
-     * @var BinParam $binParam
+     * @var BinParam
      */
     protected $binParam;
 
     /**
-     * @var ProgramParameter $programParameter
+     * @var ProgramParameter
      */
     protected $programParameter;
 
@@ -183,5 +180,5 @@ final class BinParamTest extends TestCase
         $data2 = $this->programParameter->bin2str($hex);
 
         $this->assertEquals($data1, $data2);
-     }
+    }
 }

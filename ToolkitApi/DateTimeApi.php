@@ -1,10 +1,9 @@
 <?php
+
 namespace ToolkitApi;
 
 /**
- * Class DateTimeApi
- *
- * @package ToolkitApi
+ * Class DateTimeApi.
  */
 class DateTimeApi
 {
@@ -16,20 +15,21 @@ class DateTimeApi
     public function __construct(ToolkitInterface $ToolkitSrvObj = null)
     {
         if ($ToolkitSrvObj instanceof Toolkit) {
-            $this->ToolkitSrvObj = $ToolkitSrvObj ;
+            $this->ToolkitSrvObj = $ToolkitSrvObj;
         }
     }
 
     /**
-     * from 8-character *DTS format to 17-character full date and time
+     * from 8-character *DTS format to 17-character full date and time.
      *
      * @param $dtsDateTime
+     *
      * @return bool
      */
     public function dtsToYymmdd($dtsDateTime)
     {
-        $inputFormat = "*DTS"; // special system format, returned by some APIs.
-        $outputFormat = "*YYMD"; // 17 chars long
+        $inputFormat = '*DTS'; // special system format, returned by some APIs.
+        $outputFormat = '*YYMD'; // 17 chars long
         $outputVarname = 'datetimeOut';
 
         $apiPgm = 'QWCCVTDT';

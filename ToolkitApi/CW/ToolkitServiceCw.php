@@ -1,4 +1,5 @@
 <?php
+
 namespace ToolkitApi\CW;
 
 use ToolkitApi\Toolkit;
@@ -6,11 +7,12 @@ use ToolkitApi\Toolkit;
 /**
  * ToolkitServiceCw extends the standard Zend/PHP wrapper
  *                  with specific Compatibility Wrapper (CW) features.
+ *
  * @author aseiden
  */
 class ToolkitServiceCw extends Toolkit
 {
-    static $instance = null;
+    public static $instance = null;
 
     public function __construct($database, $userOrI5NamingFlag, $password, $extensionPrefix, $isPersistent = false)
     {
@@ -18,26 +20,26 @@ class ToolkitServiceCw extends Toolkit
     }
 
     /**
-     * need to define this so we get Cw object and not parent object
+     * need to define this so we get Cw object and not parent object.
      *
      * @param string $databaseNameOrResource
      * @param string $userOrI5NamingFlag
      * @param string $password
      * @param string $extensionPrefix
-     * @param bool $isPersistent
-     * @param bool $forceNew
+     * @param bool   $isPersistent
+     * @param bool   $forceNew
+     *
      * @return bool|null
      */
-    static function getInstance($databaseNameOrResource = '*LOCAL', $userOrI5NamingFlag = '', $password = '', $extensionPrefix = '', $isPersistent = false, $forceNew = false)
+    public static function getInstance($databaseNameOrResource = '*LOCAL', $userOrI5NamingFlag = '', $password = '', $extensionPrefix = '', $isPersistent = false, $forceNew = false)
     {
         // if we're forcing a new instance, close db conn first if exists.
-        if ($forceNew && self::hasInstance() && isset(self::$instance->conn))
-        {
+        if ($forceNew && self::hasInstance() && isset(self::$instance->conn)) {
             self::$instance->disconnect();
         }
 
         // if we're forcing a new instance, or an instance hasn't been created yet, create one
-        if ($forceNew || self::$instance == NULL) {
+        if ($forceNew || self::$instance == null) {
             $toolkitService = __CLASS__;
             self::$instance = new $toolkitService($databaseNameOrResource, $userOrI5NamingFlag, $password, $extensionPrefix, $isPersistent);
         }
@@ -62,9 +64,9 @@ class ToolkitServiceCw extends Toolkit
      * Usage:
      * $isConnected = Toolkit::hasInstance();
      *
-     * @return boolean
+     * @return bool
      */
-    static function hasInstance()
+    public static function hasInstance()
     {
         if (isset(self::$instance) && is_object(self::$instance)) {
             return true;
@@ -90,7 +92,7 @@ class ToolkitServiceCw extends Toolkit
     }
 
     /**
-     * establish whether the connection is new or not. Used by i5_get_property()
+     * establish whether the connection is new or not. Used by i5_get_property().
      *
      * @param bool $isNew
      */
@@ -108,7 +110,7 @@ class ToolkitServiceCw extends Toolkit
     }
 
     /**
-     * when script ends, non-persistent connection should close
+     * when script ends, non-persistent connection should close.
      */
     public function __destruct()
     {
@@ -135,7 +137,7 @@ class ToolkitServiceCw extends Toolkit
 
     /**
      * Get the most recent system error code, if available.
-     * TODO this may not work because CPFs are done at a class level (data areas etc.)
+     * TODO this may not work because CPFs are done at a class level (data areas etc.).
      */
     public function getCPFErr()
     {
@@ -147,20 +149,18 @@ class ToolkitServiceCw extends Toolkit
      * After calling a program or command, we can export output as variables.
      * This method creates an array that can later be extracted into variables.
      * param array $outputDesc   Format of output params 'CODE'=>'CODEvar' where the value becomes a PHP var name
-     * param array $outputValues     Optional. Array of output values to export
+     * param array $outputValues     Optional. Array of output values to export.
      *
-     * @param array $outputDesc
-     * @param array $outputValues
-     * @return boolean  true on success, false on some error
+     * @return bool true on success, false on some error
      */
     public function setOutputVarsToExport(array $outputDesc, array $outputValues)
     {
         // for each piece of output, export it according to var name given in $outputDesc.
         if ($outputValues && is_array($outputValues) && count($outputValues)) {
             // initialize
-            $this->_outputVarsToExport = array();
+            $this->_outputVarsToExport = [];
 
-            foreach ($outputValues as $paramName=>$value) {
+            foreach ($outputValues as $paramName => $value) {
                 if (isset($outputDesc[$paramName])) {
                     $variableNameToExport = $outputDesc[$paramName];
                     // create the global variable named by $ varName.
@@ -187,13 +187,13 @@ class ToolkitServiceCw extends Toolkit
      * pass in array of job attributes => values to update in the current job.
      * returns true on success, false on failure (failure probably means lack of authority).
      *
-     * @param array $attrs
      * @return bool
      */
     public function changeJob(array $attrs)
     {
         $cmdString = 'CHGJOB';
         $success = i5_command($cmdString, $attrs);
+
         return $success;
     }
 }

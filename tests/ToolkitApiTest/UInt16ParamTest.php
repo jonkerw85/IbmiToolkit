@@ -1,4 +1,5 @@
 <?php
+
 namespace ToolkitApiTest;
 
 use PHPUnit\Framework\TestCase;
@@ -6,8 +7,7 @@ use ToolkitApi\ProgramParameter;
 use ToolkitApi\UInt16Param;
 
 /**
- * Class UInt16ParamTest
- * @package ToolkitApiTest
+ * Class UInt16ParamTest.
  */
 final class UInt16ParamTest extends TestCase
 {

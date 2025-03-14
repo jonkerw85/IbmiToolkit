@@ -1,44 +1,46 @@
 <?php
+
 namespace ToolkitApi\CW;
 
 use ToolkitApi\Toolkit;
 use ToolkitApi\ToolkitInterface;
 
 /**
- * Additional functionality for parsing PCML
+ * Additional functionality for parsing PCML.
  */
 class DataDescriptionPcml extends DataDescription
 {
     // array of simple types, PCML to old toolkit. Used in singlePcmlToArray().
-    protected $_pcmlTypeMap = array('char'          => I5_TYPE_CHAR,
-        'packed'        => I5_TYPE_PACKED,
+    protected $_pcmlTypeMap = ['char' => I5_TYPE_CHAR,
+        'packed' => I5_TYPE_PACKED,
         // 4 byte float
-        'float'         => I5_TYPE_FLOAT,
+        'float' => I5_TYPE_FLOAT,
         // data structure
-        'struct'        => I5_TYPE_STRUCT,
+        'struct' => I5_TYPE_STRUCT,
         // omit INT from type map because we'll need program logic to determine if short or regular int.
-        'zoned'         => I5_TYPE_ZONED,
+        'zoned' => I5_TYPE_ZONED,
         // TODO not sure if byte really maps to binary. No one knows what BYTE really does
-        'byte'          => I5_TYPE_BYTE,
-    );
+        'byte' => I5_TYPE_BYTE,
+    ];
 
     // PCML usage mapping
-    protected $_pcmlInoutMap = array('input'         => I5_IN,
-        'output'        => I5_OUT,
-        'inputoutput'   => I5_INOUT,
+    protected $_pcmlInoutMap = ['input' => I5_IN,
+        'output' => I5_OUT,
+        'inputoutput' => I5_INOUT,
         // inherit means inherit from parent element, and if no parent element, do INOUT.
         // TODO implement "inherit" more precisely, checking parent element's usage.
-        'inherit'       => I5_INOUT,
-    );
+        'inherit' => I5_INOUT,
+    ];
 
     // maintain an array of pcml structures
-    protected $_pcmlStructs = array();
+    protected $_pcmlStructs = [];
 
     /**
      * Constructor takes a PCML string and converts to an array-based old toolkit data description string.
      *
-     * @param string $pcml The string of PCML
+     * @param string           $pcml       The string of PCML
      * @param ToolkitInterface $connection connection object for toolkit
+     *
      * @throws \Exception
      */
     public function __construct($pcml, ToolkitInterface $connection)
@@ -55,7 +57,7 @@ class DataDescriptionPcml extends DataDescription
          * or change encoding if attribute is not set and ini encoding is not UTF-8
          */
         $pcml = trim($pcml);
-        $matches = array();
+        $matches = [];
         $regex = '/^<\?xml\s.*?encoding=["\']([^"\']+)["\'].*?\?>/is';
         if (preg_match($regex, $pcml, $matches) && $matches[1] != 'UTF-8') {
             //remove xml-tag
@@ -69,15 +71,15 @@ class DataDescriptionPcml extends DataDescription
         $xmlObj = new \SimpleXMLElement($pcml);
 
         // get root node and make sure it's named 'pcml'
-        if(!isset($xmlObj[0]) || ($xmlObj[0]->getName() != 'pcml')) {
-            throw new \Exception("PCML file must contain pcml tag");
+        if (!isset($xmlObj[0]) || ($xmlObj[0]->getName() != 'pcml')) {
+            throw new \Exception('PCML file must contain pcml tag');
         }
 
         $pcmlObj = $xmlObj[0];
 
         // get program name, path, etc.
-        if(!isset($pcmlObj->program) || (!$pcmlObj->program)) {
-            throw new \Exception("PCML file must contain program tag");
+        if (!isset($pcmlObj->program) || (!$pcmlObj->program)) {
+            throw new \Exception('PCML file must contain program tag');
         }
         $programNode = $pcmlObj->program;
 
@@ -92,7 +94,7 @@ class DataDescriptionPcml extends DataDescription
          * [ parseorder="name-list" ]
          * [ returnvalue="{ void | integer }" ]
          * [ threadsafe="{ true | false }" ]>
-         * </program>
+         * </program>.
          */
 
         // let's focus on name, path, and entrypoint, the only attributes likely to be used here.
@@ -134,7 +136,6 @@ class DataDescriptionPcml extends DataDescription
     /**
      * given a single ->data or ->struct element, return an array containing its contents as old toolkit-style data description.
      *
-     * @param \SimpleXmlElement $dataElement
      * @return array
      */
     public function singlePcmlToArray(\SimpleXmlElement $dataElement)
@@ -151,16 +152,14 @@ class DataDescriptionPcml extends DataDescription
         $structName = (isset($attrs['struct'])) ? (string) $attrs['struct'] : '';
 
         // fill this if we have a struct
-        $subElements = array();
+        $subElements = [];
 
         // should all be data
         if ($tagName == 'data') {
-
             $type = (isset($attrs['type'])) ? (string) $attrs['type'] : '';
 
             // if a struct then we need to recurse.
             if ($type != 'struct') {
-
                 // regular type (char, int...), not a struct, so the data element's name is just 'name'.
                 $nameName = 'Name';
             } else {
@@ -208,7 +207,6 @@ class DataDescriptionPcml extends DataDescription
                 $structSubDataElementsXmlObj = $theStruct->xpath('data');
                 if ($structSubDataElementsXmlObj) {
                     foreach ($structSubDataElementsXmlObj as $subDataElementXmlObj) {
-
                         if ($subDataElementXmlObj->attributes()->usage == 'inherit') {
                             // subdata is inheriting type from us. Give it to them.
                             $subDataElementXmlObj->attributes()->usage = $usage;
@@ -240,7 +238,6 @@ class DataDescriptionPcml extends DataDescription
                 }
             } else {
                 $newtype = '';
-
             }
 
             $newInout = (isset($this->_pcmlInoutMap[$usage])) ? (string) $this->_pcmlInoutMap[$usage] : '';
@@ -263,7 +260,7 @@ class DataDescriptionPcml extends DataDescription
             $newCountRef = $count;
         }
 
-        $element = array();
+        $element = [];
 
         $element[$nameName] = $name;
 
@@ -295,12 +292,11 @@ class DataDescriptionPcml extends DataDescription
     /**
      * given an XML object containing a PCML program definition, return an old toolkit style of data description array.
      *
-     * @param \SimpleXMLElement $xmlObj
      * @return array
      */
     public function pcmlToArray(\SimpleXMLElement $xmlObj)
     {
-        $dataDescription = array();
+        $dataDescription = [];
 
         // put structs in its own variable that can be accessed independently.
         $this->_pcmlStructs = $xmlObj->xpath('struct');
@@ -310,7 +306,6 @@ class DataDescriptionPcml extends DataDescription
 
         if ($dataElements) {
             foreach ($dataElements as $dataElement) {
-
                 $dataDescription[] = $this->singlePcmlToArray($dataElement);
             }
         }

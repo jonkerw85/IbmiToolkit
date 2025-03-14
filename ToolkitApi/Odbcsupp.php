@@ -1,10 +1,9 @@
 <?php
+
 namespace ToolkitApi;
 
 /**
- * Class odbcsupp
- *
- * @package ToolkitApi
+ * Class odbcsupp.
  */
 class odbcsupp
 {
@@ -19,13 +18,13 @@ class odbcsupp
     private $last_errormsg;
 
     /**
-     * 
      * @todo should perhaps handle this method differently if $options are not passed
      *
-     * @param string $database
-     * @param string $user
-     * @param string $password
+     * @param string     $database
+     * @param string     $user
+     * @param string     $password
      * @param array|null $options
+     *
      * @return bool|resource
      */
     public function connect($database, $user, $password, $options = null)
@@ -42,8 +41,9 @@ class odbcsupp
                 return $conn;
             }
         }
-        
+
         $this->setError();
+
         return false;
     }
 
@@ -60,10 +60,10 @@ class odbcsupp
 
     /**
      * set error code and message based on last odbc connection/prepare/execute error.
-     * 
+     *
      * @todo: consider using GET DIAGNOSTICS for even more message text:
      * http://publib.boulder.ibm.com/infocenter/iseries/v5r4/index.jsp?topic=%2Frzala%2Frzalafinder.htm
-     * 
+     *
      * @param resource|null $conn
      */
     protected function setError($conn = null)
@@ -109,44 +109,47 @@ class odbcsupp
     {
         return $this->last_errormsg;
     }
-    
+
     /**
-     * this function used for special stored procedure call only
-     * 
+     * this function used for special stored procedure call only.
+     *
      * @param resource $conn
-     * @param string $stmt
-     * @param array $bindArray
+     * @param string   $stmt
+     * @param array    $bindArray
+     *
      * @return string
      */
     public function execXMLStoredProcedure($conn, $stmt, $bindArray)
     {
         $crsr = odbc_prepare($conn, $stmt);
-        
-        if (!$crsr) { 
+
+        if (!$crsr) {
             $this->setError($conn);
+
             return false;
         }
-        
-        // extension problem: sends warning message into the php_log or stdout 
-        // about number of result sets. (switch on return code of SQLExecute() 
+
+        // extension problem: sends warning message into the php_log or stdout
+        // about number of result sets. (switch on return code of SQLExecute()
         // SQL_SUCCESS_WITH_INFO
-        if (!@odbc_execute($crsr , array($bindArray['internalKey'], $bindArray['controlKey'], $bindArray['inputXml']))) {
+        if (!@odbc_execute($crsr, [$bindArray['internalKey'], $bindArray['controlKey'], $bindArray['inputXml']])) {
             $this->setError($conn);
-            return "ODBC error code: " . $this->getErrorCode() . ' msg: ' . $this->getErrorMsg();
+
+            return 'ODBC error code: ' . $this->getErrorCode() . ' msg: ' . $this->getErrorMsg();
         }
-        
+
         // disconnect operation cause crush in fetch, nothing appears as sql script.
-        $row='';
+        $row = '';
         $outputXML = '';
         if (!$bindArray['disconnect']) {
             while (odbc_fetch_row($crsr)) {
                 $tmp = odbc_result($crsr, 1);
-                
+
                 if ($tmp) {
                     // because of ODBC problem blob transferring should execute some "clean" on returned data
-                    if (strstr($tmp , "</script>")) {
-                        $pos = strpos($tmp, "</script>");
-                        $pos += strlen("</script>"); // @todo why append this value?
+                    if (strstr($tmp, '</script>')) {
+                        $pos = strpos($tmp, '</script>');
+                        $pos += strlen('</script>'); // @todo why append this value?
                         $row .= substr($tmp, 0, $pos);
                         break;
                     } else {
@@ -156,35 +159,36 @@ class odbcsupp
             }
             $outputXML = $row;
         }
-        
+
         return $outputXML;
     }
 
     /**
      * @param resource $conn
-     * @param string $stmt
+     * @param string   $stmt
+     *
      * @return array
      */
     public function executeQuery($conn, $stmt)
     {
-        $txt = array();
+        $txt = [];
         $crsr = odbc_exec($conn, $stmt);
-        
+
         if ((version_compare(PHP_VERSION, '8.4.0', '<') && is_resource($crsr)) ||
-            (version_compare(PHP_VERSION, '8.4.0', '>=') && $crsr instanceof \Odbc\Result)) {     
-            while (odbc_fetch_row($crsr)) {  
+            (version_compare(PHP_VERSION, '8.4.0', '>=') && $crsr instanceof \Odbc\Result)) {
+            while (odbc_fetch_row($crsr)) {
                 $row = odbc_result($crsr, 1);
-                
+
                 if (!$row) {
                     break;
                 }
-                
-                $txt[]=  $row;
+
+                $txt[] = $row;
             }
         } else {
             $this->setError($conn);
         }
-        
+
         return $txt;
     }
 }

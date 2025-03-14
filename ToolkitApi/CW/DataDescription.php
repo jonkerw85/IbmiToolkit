@@ -1,4 +1,5 @@
 <?php
+
 namespace ToolkitApi\CW;
 
 use ToolkitApi\DataStructure;
@@ -7,57 +8,58 @@ use ToolkitApi\Toolkit;
 use ToolkitApi\ToolkitInterface;
 
 /**
- * Object to manage the old toolkit's style of data structure definitions
+ * Object to manage the old toolkit's style of data structure definitions.
  */
 class DataDescription
 {
-    protected $_description = array();
+    protected $_description = [];
     protected $_originalObjName = '';
-    protected $_objInfoArray = array(); // 'lib', 'obj', 'func'
+    protected $_objInfoArray = []; // 'lib', 'obj', 'func'
     protected $_connection;
-    protected $_inputValues = array();
-    protected $_pgmOutput = array();
+    protected $_inputValues = [];
+    protected $_pgmOutput = [];
     protected $_isReceiverOnly = false;
     protected $_isSingleLevelSimpleValue = false;
-    protected $_pcmlStructs = array(); // save structs in here
-    protected $_countRefNames = array(); // names of countRef fields (fields containing counts to return from programs)
+    protected $_pcmlStructs = []; // save structs in here
+    protected $_countRefNames = []; // names of countRef fields (fields containing counts to return from programs)
 
     // TODO create methods to handle then make protected
-    public $_miscAttributes = array(); // user-defined
+    public $_miscAttributes = []; // user-defined
 
     // array of simple types, old to new toolkit, with sprintf-style percent formatting.
-    protected $_typeMap = array(I5_TYPE_CHAR    => "%sa",
-        I5_TYPE_PACKED  => "%sp%s",
+    protected $_typeMap = [I5_TYPE_CHAR => '%sa',
+        I5_TYPE_PACKED => '%sp%s',
         // 4 byte float
-        I5_TYPE_FLOAT   => "4f",
+        I5_TYPE_FLOAT => '4f',
         // data structure
-        I5_TYPE_STRUCT  => "ds",
+        I5_TYPE_STRUCT => 'ds',
         // int16, 2 bytes
-        I5_TYPE_SHORT   => "5i0",
+        I5_TYPE_SHORT => '5i0',
         // int32, 4 bytes
-        I5_TYPE_INT     => "10i0",
-        I5_TYPE_ZONED   => "%ss%s",
+        I5_TYPE_INT => '10i0',
+        I5_TYPE_ZONED => '%ss%s',
         // TODO not sure if byte really maps to binary. No one knows what BYTE really does
-        I5_TYPE_BYTE    => "%sb",
+        I5_TYPE_BYTE => '%sb',
         // hole is exclusive to new toolkit.
-        'hole'          => "%sh",
-    );
+        'hole' => '%sh',
+    ];
 
-    protected $_inoutMap = array(I5_IN    => 'in',
-        I5_OUT   => 'out',
+    protected $_inoutMap = [I5_IN => 'in',
+        I5_OUT => 'out',
         // INOUT is the same as I5_IN||I5_OUT
         I5_INOUT => 'both',
-        I5_BYVAL    => 'val'
-    );
+        I5_BYVAL => 'val',
+    ];
 
     /**
      * Constructor takes an object name (program, data queue, user space) and array-based data description
      * and does some conversions.
      *
-     * @param string $objName name of program, data queue, etc. lib/pgm(svcfunc) or the like.
-     * @param array $dataDescription array of parameter definitions
-     * @param ToolkitInterface $connection connection object for toolkit
-     * @internal param I5Error $errorObj during validation we may set properties of this object.
+     * @param string           $objName         name of program, data queue, etc. lib/pgm(svcfunc) or the like.
+     * @param array            $dataDescription array of parameter definitions
+     * @param ToolkitInterface $connection      connection object for toolkit
+     *
+     * @internal param I5Error $errorObj during validation we may set properties of this object
      */
     public function __construct($objName, array $dataDescription, ToolkitInterface $connection)
     {
@@ -73,7 +75,7 @@ class DataDescription
     }
 
     /**
-     * keep it for safekeeping
+     * keep it for safekeeping.
      *
      * @param string $originalObjName
      */
@@ -113,7 +115,7 @@ class DataDescription
     }
 
     /**
-     * returns "old toolkit" data description
+     * returns "old toolkit" data description.
      *
      * @return array
      */
@@ -152,7 +154,7 @@ class DataDescription
     /**
      * @param array $pgmOutput
      */
-    protected function setPgmOutput($pgmOutput = array())
+    protected function setPgmOutput($pgmOutput = [])
     {
         $this->_pgmOutput = $pgmOutput;
     }
@@ -168,7 +170,7 @@ class DataDescription
     /**
      * @param array $inputValues
      */
-    protected function setInputValues($inputValues = array())
+    protected function setInputValues($inputValues = [])
     {
         $this->_inputValues = $inputValues;
     }
@@ -226,7 +228,8 @@ class DataDescription
     }
 
     /**
-     * Return toolkit object that was passed in
+     * Return toolkit object that was passed in.
+     *
      * @return ToolkitInterface
      */
     public function getConnection()
@@ -236,7 +239,8 @@ class DataDescription
 
     /**
      * Validate that the array is correct with correct data types, etc.
-     * @return boolean   True if validates successfully, false if any invalid elements.
+     *
+     * @return bool true if validates successfully, false if any invalid elements
      */
     public function validate()
     {
@@ -262,21 +266,21 @@ class DataDescription
 
         // trim not only spaces, but slashes, from beginning and end.
         // also make uppercase for consistency. (OK to use uppercase--lib and program here, not function)
-        $path = strtoupper(trim($path, " /"));
+        $path = strtoupper(trim($path, ' /'));
 
         // remove .LIB, .PGM, .SRVPGM that might be extensions for IFS-style file path.
-        $path = str_replace(array('.PGM', '.SRVPGM','.LIB'), array('', '', ''), $path);
+        $path = str_replace(['.PGM', '.SRVPGM', '.LIB'], ['', '', ''], $path);
 
         if (!$path) {
-            throw new \Exception("PCML program path is required.");
+            throw new \Exception('PCML program path is required.');
         }
 
-        $result = array('lib'=>'', 'obj'=>'');
+        $result = ['lib' => '', 'obj' => ''];
         $parts = explode('/', $path);
         $numParts = count($parts);
 
         if ($numParts > 3) {
-            throw new \Exception("PCML program path should not have more than 3 slash-delimited parts.");
+            throw new \Exception('PCML program path should not have more than 3 slash-delimited parts.');
         }
 
         switch ($numParts) {
@@ -298,7 +302,7 @@ class DataDescription
                 break;
 
             default:
-                throw new \Exception("PCML program path has invalid number of parts (<1 or >3).");
+                throw new \Exception('PCML program path has invalid number of parts (<1 or >3).');
                 break;
         }
 
@@ -309,8 +313,9 @@ class DataDescription
      * Given an array key name, recursively search the input values array
      * and return the value associated with the key name provided.
      *
-     * @param string $searchKey   key to search for
-     * @return string|array|false  value found in input array for array key. false if failed
+     * @param string $searchKey key to search for
+     *
+     * @return string|array|false value found in input array for array key. false if failed
      */
     protected function findValueInArray($searchKey, $valueArray)
     {
@@ -318,11 +323,12 @@ class DataDescription
 
         // ensure that array is not empty
         if (!count($valueArray)) {
-            i5ErrorActivity(I5_ERR_PHP_TYPEPARAM, I5_CAT_PHP, "Array of input values must not be empty", "Array of input values must not be empty");
+            i5ErrorActivity(I5_ERR_PHP_TYPEPARAM, I5_CAT_PHP, 'Array of input values must not be empty', 'Array of input values must not be empty');
+
             return false;
         }
 
-        foreach ($valueArray as $key=>$value) {
+        foreach ($valueArray as $key => $value) {
             // a match was found!
             if ($key == $searchKey) {
 //                $valToLog = (is_array($value)) ? print_r($value, true) : $value;
@@ -355,10 +361,11 @@ class DataDescription
      * countRef (optional) - reference to the repetition count if the field is an array
      *
      * @param array $oldDataDescription
-     * @param null $inputValues
-     * @return bool|DataStructure|ProgramParameter array of new or, if a problem, false.
+     * @param null  $inputValues
+     *
+     * @return bool|DataStructure|ProgramParameter array of new or, if a problem, false
      */
-    protected function oldToNewDescriptionItem($oldDataDescription = array(), $inputValues = null)
+    protected function oldToNewDescriptionItem($oldDataDescription = [], $inputValues = null)
     {
         // pass in old, return new
 
@@ -418,6 +425,7 @@ class DataDescription
             } else {
                 // error! not found, or an array or possibly a non-numeric string.
                 i5ErrorActivity(I5_ERR_PHP_TYPEPARAM, I5_CAT_PHP, "Value for CountRef, field $nameContainingCount, must exist and be numeric", "Value for CountRef, field $nameContainingCount, must exist and be numeric");
+
                 return false;
             }
         }
@@ -447,12 +455,14 @@ class DataDescription
             // check that it's an array, which dsParm should be
             if (!is_array($dsParm)) {
                 i5ErrorActivity(I5_ERR_PHP_TYPEPARAM, I5_CAT_PHP, 'DSParm must be an array', 'DSParm must be an array');
+
                 return false;
             }
 
             // check that it's non-empty
             if (!count($dsParm)) {
                 i5ErrorActivity(I5_ERR_PHP_TYPEPARAM, I5_CAT_PHP, 'DSParm must not be empty', 'DSParm must not be empty');
+
                 return false;
             }
 
@@ -461,7 +471,6 @@ class DataDescription
              *
              * The array may contain real values or default values.
              */
-
 
             /* $useDefaultValues may be true in two situations:
                     1. We're calling "receive data queue" or other similar function
@@ -472,12 +481,11 @@ class DataDescription
                 /**
                  * Create values to fill array hinted at by dsParm.
                  */
-                $dsData = array();
+                $dsData = [];
 
                 // loop through subfields of the data structure
 
                 foreach ($dsParm as $subParm) {
-
                     // for each subfield, find a name (regular name or data structure name)
                     // and initialize its value ($dsData) to blanks.
                     // This is the process of creating an array of values.
@@ -492,6 +500,7 @@ class DataDescription
                     // At this point we have a subfield name, derived from
                     if (!$subname) {
                         i5ErrorActivity(I5_ERR_PARAMNOTFOUND, I5_CAT_PHP, "Subfield of $dsName does not have a name itself", "Subfield of $dsName does not have a name itself");
+
                         return false;
                     }
                     $dsData[$subname] = ''; // default value. TODO Could do 0 or something for numeric
@@ -508,11 +517,12 @@ class DataDescription
                 if ($dsData === false) {
                     // ds has no description to match value!
                     i5ErrorActivity(I5_ERR_PARAMNOTFOUND, I5_CAT_PHP, "Requested parameter '$dsName' does not exist in the input data", "Requested parameter $dsName does not exist in the input data");
+
                     return false;
                 }
             }
 
-            /**
+            /*
              * dim > 1
              * We will create an array of description items.
              * If we are using default values then we need to wrap it in an "array" data structure
@@ -546,7 +556,7 @@ class DataDescription
                     // use the 'dim' tag instead of expanding it with full data
                     $dimTagValue = $dim;
                     // Put an outer array around our single element so it can survive the "foreach" below.
-                    $dsData = array(0 => $dsData);
+                    $dsData = [0 => $dsData];
                 }
 
                 // Now, whether we used default values or not,
@@ -558,7 +568,7 @@ class DataDescription
                 // TODO check that count of ds values (each a ds) does not exceed dim.
 
                 /**
-                 * $connection->logThis("array of DS found. dsName: $dsName. dsData: " . print_r($dsData, true) . ' dsParm: ' . print_r($dsParm, true));
+                 * $connection->logThis("array of DS found. dsName: $dsName. dsData: " . print_r($dsData, true) . ' dsParm: ' . print_r($dsParm, true));.
                  */
 
                 // Step 2: Associate description with data for each element of the DS
@@ -566,8 +576,8 @@ class DataDescription
                 //                     If default values, works the same but with only one element.
                 // treat each ds and data array separately.
                 // loop through input values array for DS
-                $dsDataValues = array();
-                foreach ($dsData as $numericIndex=>$dsDataSingle) {
+                $dsDataValues = [];
+                foreach ($dsData as $numericIndex => $dsDataSingle) {
                     // work with a single data structure
                     // *** dsParm (structure) will be the same for each ds in the array ****
                     // recursively handle each ds in array and add to dsDataValue array.
@@ -598,7 +608,7 @@ class DataDescription
                     $singleDsDesc['dsname'] = $dsName;
                     // pass in the ds elements and the input data for it.
                     // Get back the new-style description item.
-                    $newStyleItem =  $this->oldToNewDescriptionItem($singleDsDesc,array($dsName=>$dsDataSingle));
+                    $newStyleItem = $this->oldToNewDescriptionItem($singleDsDesc, [$dsName => $dsDataSingle]);
 
                     // dim tag tells XMLSERVICE to expand this element to a certain maximum size on output
                     // (after the RPG/COBOL completes) to hold the output array.
@@ -610,21 +620,20 @@ class DataDescription
                         // Set a label to identify the count field. The same label will be attached
                         // to the count field to match them up.
                         if (isset($nameContainingCount) && $nameContainingCount) {
-                            $newStyleItem->setParamProperties(array('dou'=>$nameContainingCount));
+                            $newStyleItem->setParamProperties(['dou' => $nameContainingCount]);
                         } //(if ($nameContainingCount))
-
                     }
                     $dsDataValues[] = $newStyleItem;
                 }
 
                 // create a special "array" ds to house the array of DSes.
                 // Very important. The output parser will see this DS labeled [array='true'] and know that we have an array of DSes inside.
-                $new = new DataStructure($dsDataValues, $dsName, 0 , false, '', true); // 'true' says this outer structure is an array
+                $new = new DataStructure($dsDataValues, $dsName, 0, false, '', true); // 'true' says this outer structure is an array
             } else {
                 // not dim, not an array of DSes. A single DS.
                 foreach ($dsParm as $singleParm) {
                     // singleParm is something like this:
-                    /**
+                    /*
                      * [Name] => PS1
                      * [IO] => 3
                      * [Type] => 0
@@ -639,7 +648,7 @@ class DataDescription
                 // create a ds based on individual parms gathered above.
                 $new = new DataStructure($dataValue, $dsName);
             }
-        }  else {
+        } else {
             // *** not a data structure. A regular element (could be an array or single value). ***
 
             // data type. don't check for "empty" or $old[['type'], because 0 is legit (CHAR).
@@ -650,7 +659,7 @@ class DataDescription
             // get length if there is one
             $length = (isset($old['length']) && $old['length']) ? $old['length'] : '';
             // split into whole and decimal parts. may be like "3" or "3.1"
-            list($whole, $dec) = explode('.', $length) + array('', ''); // extra array avoids Undefined index errors
+            list($whole, $dec) = explode('.', $length) + ['', '']; // extra array avoids Undefined index errors
 
             // TODO: apply same dim/array logic here that was used above for data structure dim/arrays.
             //       But the need is not as urgent here because single-element arrays are not as big (XML-wise)
@@ -670,7 +679,6 @@ class DataDescription
                     $isArray = false;
                     // and leave $dim alone to flow into the ProgramParmeter below.
                 }
-
             } else {
                 // real values
                 $dataValue = $this->findValueInArray($name, $inputValues);
@@ -679,6 +687,7 @@ class DataDescription
                 if ($isArray) {
                     if (count($dataValue) > $dim) {
                         i5ErrorActivity(I5_ERR_ENDOFOCC, I5_CAT_PHP, "Number of array elements in $name greater than the maximum, $dim, set in the description", "Number of array elements in $name greater than the maximum, $dim, set in the description");
+
                         return false;
                     }
                 }
@@ -720,15 +729,15 @@ class DataDescription
      * to make a parameter array/object that can be presented to a program or data queue, etc.
      * If any error or validation problem occurs (such as a value not matching data type), return false.
      *
-     *
      * @param array $input                 Data input params
      * @param array $description[optional] Description of data, if want to specify explicitly
-     *                                     rather than to use description from class member.
-     * @return array|boolean Return the param array or, if an error occurs, false.
+     *                                     rather than to use description from class member
+     *
+     * @return array|bool return the param array or, if an error occurs, false
      */
-    public function generateNewToolkitParams($input = array(), $description = null)
+    public function generateNewToolkitParams($input = [], $description = null)
     {
-        $paramsForNewToolkit = array();
+        $paramsForNewToolkit = [];
 
         // store input value array for safekeeping.
         // could be blank.
@@ -738,7 +747,7 @@ class DataDescription
         $description = ($description) ? ($description) : $this->_description;
 
         // do one at a time
-        foreach ($description as $key=>$descParam) {
+        foreach ($description as $key => $descParam) {
             // convert top-level keys to lower case for consistency.
             $descParam = array_change_key_case($descParam, CASE_LOWER);
 
@@ -749,14 +758,14 @@ class DataDescription
 
             // if not globally specified as needing default input values
             if (!$this->getIsReceiverOnly()) {
-
                 // desc name can be given under the index "name" or "dsname".
                 if ((isset($descParam['name']) && $descParam['name'])) {
                     $name = $descParam['name'];
                 } elseif (isset($descParam['dsname']) && $descParam['dsname']) {
                     $name = $descParam['dsname'];
                 } else {
-                    i5ErrorActivity(I5_ERR_PHP_TYPEPARAM, I5_CAT_PHP, "Parameter name in description is missing or blank",  "Parameter name in description is missing or blank");
+                    i5ErrorActivity(I5_ERR_PHP_TYPEPARAM, I5_CAT_PHP, 'Parameter name in description is missing or blank', 'Parameter name in description is missing or blank');
+
                     return false;
                 }
 
@@ -783,7 +792,6 @@ class DataDescription
         // If so, apply "enddo" label to those countref fields that were referenced.
         if ($countRefNames = $this->getCountRefNames()) {
             foreach ($countRefNames as $countRefName) {
-
                 // for each countRefName, find data definition (new toolkit params now)
                 // where that fieldname is defined.
                 // If not defined, write error to error log.
@@ -795,7 +803,7 @@ class DataDescription
                             // Good, we found matching field name that's a regular field.
                             // Use the count ref name as the label.
                             // Should work as long as there aren't two identically named countRef fields.
-                            $param->setParamProperties(array('enddo'=>$countRefName));
+                            $param->setParamProperties(['enddo' => $countRefName]);
                         } else {
                             // no good. Count must be in a regular variable, not a DS.
                             $this->getConnection()->logThis("countRef $countRefName cannot be specified by a data structure. Must be a scalar variable type to hold the count.");
@@ -820,17 +828,18 @@ class DataDescription
      * in the constructor, and having converted the data desc and interpolated the values,
      * Now we call the program and return an array of output variables.
      *
-     * @param array $newInputParams   New-style toolkit array of params including values
-     *                                (use generateNewToolkitParams($inputValues) to create it)
-     * @return boolean             true if OK, false if it didn't succeed.
+     * @param array $newInputParams New-style toolkit array of params including values
+     *                              (use generateNewToolkitParams($inputValues) to create it)
+     *
+     * @return bool true if OK, false if it didn't succeed
      */
-    public function callProgram($newInputParams = array())
+    public function callProgram($newInputParams = [])
     {
         $pgmInfo = $this->getObjInfo();
         $pgmName = $pgmInfo['obj'];
-        $lib =     $pgmInfo['lib'];
-        $func =    $pgmInfo['func'];
-        $options = array();
+        $lib = $pgmInfo['lib'];
+        $func = $pgmInfo['func'];
+        $options = [];
 
         // if a service program subprocedure (function) is defined
         if ($func) {
@@ -849,6 +858,7 @@ class DataDescription
         if ($pgmCallOutput) {
             $outputParams = $conn->getOutputParam($pgmCallOutput);
             $this->setPgmOutput($outputParams);
+
             return true;
         } else {
             return false;
@@ -870,16 +880,17 @@ class DataDescription
      *
      * @param $name
      * @param $inputArray
+     *
      * @return bool
      */
-    protected function findInputValueByName( $name, $inputArray )
+    protected function findInputValueByName($name, $inputArray)
     {
-        foreach($inputArray as $key=>$value){
-            if($key === $name) { // use === because plain == allowed numeric indexes to be equal to names
+        foreach ($inputArray as $key => $value) {
+            if ($key === $name) { // use === because plain == allowed numeric indexes to be equal to names
                 return $value;
             }
             if (is_array($value)) {
-                if (($result = $this->findInputValueByName($name,$value)) !== false) {
+                if (($result = $this->findInputValueByName($name, $value)) !== false) {
                     return $result;
                 }
             }

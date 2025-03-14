@@ -1,10 +1,11 @@
 <?php
+
 namespace ToolkitApi;
 
 class UserSpace
 {
     private $ToolkitSrvObj;
-    private $USName = NULL;
+    private $USName = null;
     private $USlib = 'QTEMP';
     // these were private
     protected $CPFErr = '0000000';
@@ -16,7 +17,7 @@ class UserSpace
     public function __construct(ToolkitInterface $ToolkitSrvObj = null)
     {
         if ($ToolkitSrvObj instanceof Toolkit) {
-            $this->ToolkitSrvObj = $ToolkitSrvObj ;
+            $this->ToolkitSrvObj = $ToolkitSrvObj;
         }
 
         return $this;
@@ -69,24 +70,25 @@ class UserSpace
     */
 
     /**
-     * @param null $UserSpaceName
-     * @param null $USLib
-     * @param int $InitSize
+     * @param null   $UserSpaceName
+     * @param null   $USLib
+     * @param int    $InitSize
      * @param string $publicAuthority
      * @param string $InitValue
      * @param string $extendedAttribute
      * @param string $textDescription
+     *
      * @return bool
      */
-    public function CreateUserSpace($UserSpaceName = NULL, $USLib = NULL, $InitSize =1024, $publicAuthority = '*ALL', $InitValue=' ',
-                                    $extendedAttribute='PF', $textDescription='ZS XML Service User Space')
+    public function CreateUserSpace($UserSpaceName = null, $USLib = null, $InitSize = 1024, $publicAuthority = '*ALL', $InitValue = ' ',
+                                    $extendedAttribute = 'PF', $textDescription = 'ZS XML Service User Space')
     {
         // @todo check that 1 <= InitSize <= 16776704
 
         // set defaults in case blank is passed in
         $InitSize = ($InitSize) ? $InitSize : 1024;
         $publicAuthority = ($publicAuthority) ? $publicAuthority : '*ALL';
-        $InitValue= ($InitValue) ? $InitValue : '00'; // single binary hex value X'00, most efficient initialization, according to documentation of QUSCRTUS
+        $InitValue = ($InitValue) ? $InitValue : '00'; // single binary hex value X'00, most efficient initialization, according to documentation of QUSCRTUS
         $extendedAttribute = ($extendedAttribute) ? $extendedAttribute : 'PF';
         $textDescription = ($textDescription) ? $textDescription : 'ZS XML Service User Space';
 
@@ -94,24 +96,24 @@ class UserSpace
         $this->setUSName($UserSpaceName, $USLib);
 
         // format extended attribute into proper format (left-aligned)
-        $extAttrFormatted = sprintf("%-10s", $extendedAttribute);
+        $extAttrFormatted = sprintf('%-10s', $extendedAttribute);
 
         // format authority into proper format (left-aligned)
-        $authFormatted = sprintf("%-10s", $publicAuthority);
+        $authFormatted = sprintf('%-10s', $publicAuthority);
 
-        $params[] = Toolkit::AddParameterChar('in', 20, "USER SPACE NAME", 'userspacename', $this->getUSFullName());
-        $params[] = Toolkit::AddParameterChar('in', 10, "Extended Attribute",'extendedattribute', $extAttrFormatted);
-        $params[] = Toolkit::AddParameterInt32('in', "Initial Size", 'initialsize', $InitSize);
-        $params[] = Toolkit::AddParameterBin('in', 1, "Initial Value: one byte to fill whole space with", 'initval', $InitValue);
-        $params[] = Toolkit::AddParameterChar('in', 10, "Public Authority", 'authority', $authFormatted);
-        $params[] = Toolkit::AddParameterChar('in', 50, "Description", 'description', $textDescription);
-        $params[] = Toolkit::AddParameterChar('in', 10, "Replace US", 'replaceuserspace', "*NO       ");
+        $params[] = Toolkit::AddParameterChar('in', 20, 'USER SPACE NAME', 'userspacename', $this->getUSFullName());
+        $params[] = Toolkit::AddParameterChar('in', 10, 'Extended Attribute', 'extendedattribute', $extAttrFormatted);
+        $params[] = Toolkit::AddParameterInt32('in', 'Initial Size', 'initialsize', $InitSize);
+        $params[] = Toolkit::AddParameterBin('in', 1, 'Initial Value: one byte to fill whole space with', 'initval', $InitValue);
+        $params[] = Toolkit::AddParameterChar('in', 10, 'Public Authority', 'authority', $authFormatted);
+        $params[] = Toolkit::AddParameterChar('in', 50, 'Description', 'description', $textDescription);
+        $params[] = Toolkit::AddParameterChar('in', 10, 'Replace US', 'replaceuserspace', '*NO       ');
         $params[] = Toolkit::AddErrorDataStruct();
 
 //        $params = $this->DefineUserSpaceParameters($InitSize, $Auth, $InitChar);
         $retPgmArr = $this->ToolkitSrvObj->PgmCall('QUSCRTUS', 'QSYS', $params);
 
-        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr , "Create user space failed.")) {
+        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr, 'Create user space failed.')) {
             return false;
         }
 
@@ -131,22 +133,22 @@ class UserSpace
         $libName = ' ';
 
         /*Reciever var*/
-        $ds[]=Toolkit::AddParameterInt32('out', "Bytes returned", 'ret_bytes', $BytesRet);
-        $ds[]=Toolkit::AddParameterInt32('out', "Bytes available", 'bytes_avail', $BytesAv);
-        $ds[]=Toolkit::AddParameterInt32('out', "Space size", 'spacesize', $USSize);
-        $ds[]=Toolkit::AddParameterChar('out', 1, "Automatic extendibility",'extend_automatic', $Ext);
-        $ds[]=Toolkit::AddParameterChar('out', 1, "Initial value", 'initval', $InitVal);
-        $ds[]=Toolkit::AddParameterChar('out', 10, "User space library name", 'uslib', $libName);
+        $ds[] = Toolkit::AddParameterInt32('out', 'Bytes returned', 'ret_bytes', $BytesRet);
+        $ds[] = Toolkit::AddParameterInt32('out', 'Bytes available', 'bytes_avail', $BytesAv);
+        $ds[] = Toolkit::AddParameterInt32('out', 'Space size', 'spacesize', $USSize);
+        $ds[] = Toolkit::AddParameterChar('out', 1, 'Automatic extendibility', 'extend_automatic', $Ext);
+        $ds[] = Toolkit::AddParameterChar('out', 1, 'Initial value', 'initval', $InitVal);
+        $ds[] = Toolkit::AddParameterChar('out', 10, 'User space library name', 'uslib', $libName);
         //$params[] = array('ds'=>$ds);
         $params[] = Toolkit::AddDataStruct($ds, 'receiver'); // note that ds names are discarded
-        $params[] = Toolkit::AddParameterInt32('in', "Length of reciever",'reciver_len', 24);
-        $params[] = Toolkit::AddParameterChar('in', 8, "Format name", 'format', "SPCA0100");
-        $params[] = Toolkit::AddParameterChar('in', 20, "User space name and library", 'usfullname', $this->getUSFullName());
+        $params[] = Toolkit::AddParameterInt32('in', 'Length of reciever', 'reciver_len', 24);
+        $params[] = Toolkit::AddParameterChar('in', 8, 'Format name', 'format', 'SPCA0100');
+        $params[] = Toolkit::AddParameterChar('in', 20, 'User space name and library', 'usfullname', $this->getUSFullName());
         $params[] = Toolkit::AddErrorDataStruct();
 
         $retPgmArr = $this->ToolkitSrvObj->PgmCall('QUSRUSAT', 'QSYS', $params);
 
-        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr, "Retrieve user space attributes failed. Error: ")) {
+        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr, 'Retrieve user space attributes failed. Error: ')) {
             return false;
         }
 
@@ -161,10 +163,10 @@ class UserSpace
         }
 
         // return selected values from return array.
-        return array("Space Size"=>$retArr['spacesize'],
-            "Automatic extendibility"=> $retArr['extend_automatic'],
-            "Initial value"=>$retArr['initval'],
-            "User space library name"=>$retArr['uslib']);
+        return ['Space Size' => $retArr['spacesize'],
+            'Automatic extendibility' => $retArr['extend_automatic'],
+            'Initial value' => $retArr['initval'],
+            'User space library name' => $retArr['uslib'], ];
     }
 
     /**
@@ -173,7 +175,8 @@ class UserSpace
     public function RetrieveUserSpaceSize()
     {
         $ret = $this->RetrieveUserSpaceAttr();
-        return (isset($ret['Space Size'])? $ret['Space Size']: -1); // -1 is an error condition
+
+        return isset($ret['Space Size']) ? $ret['Space Size'] : -1; // -1 is an error condition
     }
 
     /**
@@ -181,12 +184,12 @@ class UserSpace
      */
     public function DeleteUserSpace()
     {
-        $params[] = Toolkit::AddParameterChar('in', 20, "User space name", 'userspacename', $this->getUSFullName());
+        $params[] = Toolkit::AddParameterChar('in', 20, 'User space name', 'userspacename', $this->getUSFullName());
         $params[] = Toolkit::AddErrorDataStruct();
 
         $retPgmArr = $this->ToolkitSrvObj->PgmCall('QUSDLTUS', 'QSYS', $params);
 
-        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr, "Delete user space failed. Error:")) {
+        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr, 'Delete user space failed. Error:')) {
             return false;
         }
 
@@ -199,20 +202,21 @@ class UserSpace
      * @param int $startpos
      * @param $valuelen
      * @param $value
+     *
      * @return bool
      */
     public function WriteUserSpace($startpos, $valuelen, $value)
     {
         //Size ($comment, $varName = '', $labelFindLen = null) {
-        $params[] =  Toolkit::AddParameterChar ('in', 20, "User space name and lib", 'usfullname', $this->getUSFullName());
-        $params[] =  Toolkit::AddParameterInt32('in', "Starting position",'pos_from', $startpos);
-        $params[] =  Toolkit::AddParameterInt32('in', "Length of data", 'dataLen', $valuelen);
-        $params[] =  Toolkit::AddParameterChar('in', $valuelen, "Input data", 'data_value', $value);
-        $params[] =  Toolkit::AddParameterChar('in', 1, "Force changes to auxiliary storage", 'aux_storage', '0');
-        $params[] =  Toolkit::AddErrorDataStruct();
+        $params[] = Toolkit::AddParameterChar('in', 20, 'User space name and lib', 'usfullname', $this->getUSFullName());
+        $params[] = Toolkit::AddParameterInt32('in', 'Starting position', 'pos_from', $startpos);
+        $params[] = Toolkit::AddParameterInt32('in', 'Length of data', 'dataLen', $valuelen);
+        $params[] = Toolkit::AddParameterChar('in', $valuelen, 'Input data', 'data_value', $value);
+        $params[] = Toolkit::AddParameterChar('in', 1, 'Force changes to auxiliary storage', 'aux_storage', '0');
+        $params[] = Toolkit::AddErrorDataStruct();
         $retPgmArr = $this->ToolkitSrvObj->PgmCall('QUSCHGUS', 'QSYS', $params);
 
-        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr , "Write into User Space failed. Error:")) {
+        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr, 'Write into User Space failed. Error:')) {
             return false;
         }
 
@@ -223,7 +227,7 @@ class UserSpace
      * CW version. $param must be an array of ProgramParameter objects or a single ProgramParameter object.
      *
      * @param int $startPos
-     * @param ProgramParameter $param
+     *
      * @return bool
      */
     public function WriteUserSpaceCw($startPos, ProgramParameter $param)
@@ -239,12 +243,12 @@ class UserSpace
         $labelForSizeOfInputData = 'dssize';
         $param->setParamLabelLen($labelForSizeOfInputData);
         //Size ($comment,  $varName = '', $labelFindLen = null) {
-        $params[] =  Toolkit::AddParameterChar('in', 20,"User space name and lib", 'usfullname', $this->getUSFullName());
-        $params[] =  Toolkit::AddParameterInt32('in', "Starting position", 'pos_from', $startPos);
-        $params[] =  Toolkit::AddParameterSize("Length of data",'dataLen', $labelForSizeOfInputData);
-        $params[] =  $param;
-        $params[] =  Toolkit::AddParameterChar('in', 1, "Force changes to auxiliary storage", 'aux_storage', '0');
-        $params[] =  Toolkit::AddErrorDataStruct();
+        $params[] = Toolkit::AddParameterChar('in', 20, 'User space name and lib', 'usfullname', $this->getUSFullName());
+        $params[] = Toolkit::AddParameterInt32('in', 'Starting position', 'pos_from', $startPos);
+        $params[] = Toolkit::AddParameterSize('Length of data', 'dataLen', $labelForSizeOfInputData);
+        $params[] = $param;
+        $params[] = Toolkit::AddParameterChar('in', 1, 'Force changes to auxiliary storage', 'aux_storage', '0');
+        $params[] = Toolkit::AddErrorDataStruct();
 
         $retPgmArr = $this->ToolkitSrvObj->PgmCall('QUSCHGUS', 'QSYS', $params);
 
@@ -256,21 +260,23 @@ class UserSpace
     }
 
     /**
-     * if receiveDescription given, readlen = 0
+     * if receiveDescription given, readlen = 0.
      *
-     * @param int $frompos
-     * @param int $readlen
+     * @param int  $frompos
+     * @param int  $readlen
      * @param null $receiveStructure
+     *
      * @return bool
+     *
      * @throws \Exception
      */
-    public function ReadUserSpace($frompos=1, $readlen = 0, $receiveStructure = null)
+    public function ReadUserSpace($frompos = 1, $readlen = 0, $receiveStructure = null)
     {
         //how to see via green screen DSPF STMF('/QSYS.lib/qgpl.lib/ZS14371311.usrspc')
 
         $dataRead = ' ';
-        $params[] = Toolkit::AddParameterChar('in', 20,  "User space name and library", 'userspacename', $this->getUSFullName());
-        $params[] = Toolkit::AddParameterInt32('in',  "From position", 'position_from', $frompos);
+        $params[] = Toolkit::AddParameterChar('in', 20, 'User space name and library', 'userspacename', $this->getUSFullName());
+        $params[] = Toolkit::AddParameterInt32('in', 'From position', 'position_from', $frompos);
 
         $receiverVarName = 'receiverdata';
 
@@ -281,16 +287,15 @@ class UserSpace
             }
 
             $labelForSizeOfInputData = 'dssize';
-//
-            $params[] = Toolkit::AddParameterSize("Length of data", 'dataLen', $labelForSizeOfInputData);
+
+            $params[] = Toolkit::AddParameterSize('Length of data', 'dataLen', $labelForSizeOfInputData);
 
             // wrap simple ds around receive structure so we can assign a varname to retrieve later.
             $receiveDs[] = $receiveStructure;
             $params[] = Toolkit::AddDataStruct($receiveDs, $receiverVarName, 0, '', false, $labelForSizeOfInputData);
-
         } else {
             // regular readlen, no special structure or size labels.
-            $params[] = Toolkit::AddParameterInt32('in',  "Size of data", 'datasize', $readlen);
+            $params[] = Toolkit::AddParameterInt32('in', 'Size of data', 'datasize', $readlen);
             $params[] = Toolkit::AddParameterChar('out', $readlen, $receiverVarName, $receiverVarName, $receiveStructure);
         }
 
@@ -298,8 +303,9 @@ class UserSpace
 
         $retPgmArr = $this->ToolkitSrvObj->PgmCall('QUSRTVUS', 'QSYS', $params);
 
-        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr , "Read user space failed. Error:"))
+        if ($this->ToolkitSrvObj->verify_CPFError($retPgmArr, 'Read user space failed. Error:')) {
             return false;
+        }
         $retArr = $retPgmArr['io_param'];
 
         // return our receiverstructure.
@@ -322,17 +328,18 @@ class UserSpace
     */
 
     /**
-     * @return null|string
+     * @return string|null
      */
     protected function generate_name()
     {
         $localtime = localtime();
-        $this->USName = sprintf("ZS%d%d%d%d",
+        $this->USName = sprintf('ZS%d%d%d%d',
             $localtime[0],/*sec*/
             $localtime[1],/*min*/
             $localtime[2],/*our*/
             $localtime[3] /*day*/
         );
+
         return $this->USName;
     }
 
@@ -340,15 +347,15 @@ class UserSpace
      * @param null $name
      * @param null $lib
      */
-    public function setUSName($name = NULL, $lib = NULL)
+    public function setUSName($name = null, $lib = null)
     {
-        if ($name === NULL) {
-            $this->USName = $this->generate_name ();
+        if ($name === null) {
+            $this->USName = $this->generate_name();
         } else {
             $this->USName = $name;
         }
 
-        if ($lib === NULL) {
+        if ($lib === null) {
             $this->USlib = DFTLIB;
         } else {
             $this->USlib = $lib;
@@ -364,16 +371,16 @@ class UserSpace
     }
 
     /**
-     * Name and Library
+     * Name and Library.
      *
-     * @return null|string
+     * @return string|null
      */
     public function getUSFullName()
     {
         if ($this->USName != null) {
-            return  sprintf("%-10s%-10s", $this->USName, $this->USlib);
+            return sprintf('%-10s%-10s', $this->USName, $this->USlib);
         }
 
-        return NULL;
+        return null;
     }
 }

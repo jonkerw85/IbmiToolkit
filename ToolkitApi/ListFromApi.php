@@ -1,4 +1,5 @@
 <?php
+
 namespace ToolkitApi;
 
 class ListFromApi
@@ -42,12 +43,12 @@ class ListFromApi
     }
 
     /**
-     * Call QGYGTLE (get list entry) API using handle and "next record to request."
+     * Call QGYGTLE (get list entry) API using handle and "next record to request.".
      *
      * Note: if get timing problems where no records are returned:
      * Embed the call to the QGYGTLE API in a do-loop that loops until a record is returned.
      *
-     * @return bool Return false when run out of records (get GUI0006 error code).
+     * @return bool return false when run out of records (get GUI0006 error code)
      */
     public function getNextEntry()
     {
@@ -61,7 +62,7 @@ class ListFromApi
 
         $outputVarname = 'receiver';
 
-        $lenLabel= 'size' . $outputVarname;
+        $lenLabel = 'size' . $outputVarname;
 
         $paramXml = "<parm io='out' comment='1. receiver data'>
             <ds var='$outputVarname' comment='receiver appropriate to whatever API created the list' len='$lenLabel'>
@@ -73,7 +74,7 @@ class ListFromApi
             </parm>
             <parm io='in' comment='3. Request handle'>
             <data var='requestHandle' comment='Request handle: binary/hex' type='4b'>$requestHandle</data>
-            </parm>\n" .  $this->ToolkitSrvObj->getListInfoApiXml(4) . "\n" .
+            </parm>\n" . $this->ToolkitSrvObj->getListInfoApiXml(4) . "\n" .
             "<parm io='in' comment='5. Number of records to return'>
             <data var='numRecsDesired' type='10i0'>1</data>
             </parm>
@@ -99,6 +100,7 @@ class ListFromApi
         if ($apiErrCode != '0000000') {
             // Note: caller can check for GUI0006 and GUI0001 (expected when go past last record) vs. any other error (not expected)
             $this->ToolkitSrvObj->setErrorCode($apiErrCode);
+
             return false;
         }
 
@@ -108,7 +110,7 @@ class ListFromApi
     }
 
     /**
-     * close the list
+     * close the list.
      *
      * @return bool
      */

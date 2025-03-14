@@ -9,7 +9,7 @@ use ToolkitApi\Toolkit;
 
 final class ToolkitTest extends TestCase
 {
-    const TEMPORARY_LIBRARY = 'MYLIB1';
+    public const TEMPORARY_LIBRARY = 'MYLIB1';
 
     /**
      * @var array
@@ -48,7 +48,7 @@ final class ToolkitTest extends TestCase
                 'platform' => $this->connectionOptions['platform'],
                 'platform_options' => [
                     'quote_identifiers' => $this->connectionOptions['platform_options']['quote_identifiers'],
-                ]
+                ],
             ]
 );
 
@@ -98,6 +98,7 @@ final class ToolkitTest extends TestCase
         if ($this->mockDb2UsingSqlite) {
             return ($type === 'pdo') ? 'sqlite::memory:' : 'Driver=SQLite3;Database=:memory:';
         }
+
         return ($type === 'pdo') ? 'odbc:' . $this->connectionOptions['dsn'] : $this->connectionOptions['dsn'];
     }
 }

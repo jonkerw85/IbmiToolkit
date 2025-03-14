@@ -1,16 +1,15 @@
 <?php
+
 namespace ToolkitApi;
 
 /**
- * Class DataArea
- *
- * @package ToolkitApi
+ * Class DataArea.
  */
 class DataArea
 {
-    private $DataAreaName =null;
-    private $DataAreaLib  =null;
-    private $ToolkitSrvObj=null;
+    private $DataAreaName = null;
+    private $DataAreaLib = null;
+    private $ToolkitSrvObj = null;
     private $ErrMessage;
 
     /**
@@ -20,6 +19,7 @@ class DataArea
     {
         if ($ToolkitSrvObj instanceof Toolkit) {
             $this->ToolkitSrvObj = $ToolkitSrvObj;
+
             return $this;
         } else {
             return false;
@@ -28,18 +28,20 @@ class DataArea
 
     /**
      * for *char data area. According to create other data area types
-     * use CL command
+     * use CL command.
      *
      * @param string $DataAreaName
-     * @param string $DataAreaLib *CURLIB is correct, the default with CRTDTAARA.
-     * @param int $size
+     * @param string $DataAreaLib  *CURLIB is correct, the default with CRTDTAARA
+     * @param int    $size
+     *
      * @return bool
+     *
      * @throws \Exception
      */
-    public function createDataArea($DataAreaName = '', $DataAreaLib = "*CURLIB", $size = 2000)
+    public function createDataArea($DataAreaName = '', $DataAreaLib = '*CURLIB', $size = 2000)
     {
-        if ($DataAreaName !='' && $this->DataAreaName == NULL) { /*was not set before*/
-            $this->setDataAreaName($DataAreaName , $DataAreaLib);
+        if ($DataAreaName != '' && $this->DataAreaName == null) { /*was not set before*/
+            $this->setDataAreaName($DataAreaName, $DataAreaLib);
         }
 
         if ($size > 2000 || $size <= 0) {
@@ -50,11 +52,11 @@ class DataArea
 
         $cmd = sprintf("QSYS/CRTDTAARA DTAARA(%s/%s) TYPE(*CHAR) LEN($dataAreaLen)",
             ($DataAreaLib != '' ? $DataAreaLib : $this->DataAreaLib),
-            ($DataAreaName !='' ? $DataAreaName : $this->DataAreaName));
+            ($DataAreaName != '' ? $DataAreaName : $this->DataAreaName));
 
         // @todo get CPF code
         if (!$this->ToolkitSrvObj->CLCommand($cmd)) {
-            $this->ErrMessage =  "Create Data Area failed." . $this->ToolkitSrvObj->getLastError();
+            $this->ErrMessage = 'Create Data Area failed.' . $this->ToolkitSrvObj->getLastError();
             throw new \Exception($this->ErrMessage);
         }
 
@@ -66,13 +68,14 @@ class DataArea
      */
     private function getAPIDataAreaName()
     {
-        return  (sprintf("%-10s%-10s", $this->DataAreaName, $this->DataAreaLib));
+        return sprintf('%-10s%-10s', $this->DataAreaName, $this->DataAreaLib);
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
-    protected function getQualifiedDataAreaName() {
+    protected function getQualifiedDataAreaName()
+    {
         // return dtaara name in lib/dtaara format.
         if ($this->DataAreaLib) {
             return "{$this->DataAreaLib}/{$this->DataAreaName}";
@@ -87,24 +90,25 @@ class DataArea
      *
      * @param $dataAreaName
      * @param string $dataAreaLib
+     *
      * @throws \Exception
      */
-    public function setDataAreaName($dataAreaName, $dataAreaLib = "*LIBL")
+    public function setDataAreaName($dataAreaName, $dataAreaLib = '*LIBL')
     {
         /**
          * special values:
          * LDA     Local data area
          * GDA     Group data area
-         * PDA     Program initialization parameter data area
+         * PDA     Program initialization parameter data area.
          */
         $dataAreaName = trim(strtoupper($dataAreaName));
 
         if ($dataAreaName == '') {
-            throw new \Exception("Data Area name parameter should be defined ");
+            throw new \Exception('Data Area name parameter should be defined ');
         }
 
         // no library allowed for these special values.
-        if (in_array($dataAreaName, array('*LDA', '*GDA', '*PDA'))) {
+        if (in_array($dataAreaName, ['*LDA', '*GDA', '*PDA'])) {
             $dataAreaLib = '';
         }
 
@@ -113,14 +117,16 @@ class DataArea
     }
 
     /**
-     * @param int $fromPosition
+     * @param int    $fromPosition
      * @param string $dataLen
+     *
      * @return bool
      */
-    public function readDataArea($fromPosition = 1 , $dataLen = '*ALL')
+    public function readDataArea($fromPosition = 1, $dataLen = '*ALL')
     {
-        if (!$this->ToolkitSrvObj instanceof Toolkit)
+        if (!$this->ToolkitSrvObj instanceof Toolkit) {
             return false;
+        }
 
         $Err = ' ';
         $value = '';
@@ -143,7 +149,7 @@ class DataArea
 
         /**
          * Retrieve Data Area (QWCRDTAA) API
-         * http://publib.boulder.ibm.com/infocenter/iseries/v5r3/index.jsp?topic=%2Fapis%2Fqwcrdtaa.htm
+         * http://publib.boulder.ibm.com/infocenter/iseries/v5r3/index.jsp?topic=%2Fapis%2Fqwcrdtaa.htm.
          *
          * Required Parameter Group:
          * 1     Receiver variable     Output     Char(*)
@@ -166,11 +172,11 @@ class DataArea
 
         // @todo allow data structure in data area, if packed/binary allowed.
 
-        $receiverVar = array();
+        $receiverVar = [];
         $receiverVar[] = $toolkit->AddParameterInt32('out', 'Bytes available: length of all data available to return', 'bytesAvail', $maxValueSize);
         $receiverVar[] = $toolkit->AddParameterInt32('out', 'Length of all data returned, limited by size of receiver', 'bytesReturned', 0);
         $receiverVar[] = $toolkit->AddParameterChar('out', '10', 'Type of value returned (*CHAR, *DEC, *LGL)', 'Type', '');
-        $receiverVar[] = $toolkit->AddParameterChar('out', '10',  'Library where data area was found', 'Library', '');
+        $receiverVar[] = $toolkit->AddParameterChar('out', '10', 'Library where data area was found', 'Library', '');
         $receiverVar[] = $toolkit->AddParameterInt32('out', 'Length of value returned', 'lengthReturned', 0);
         $receiverVar[] = $toolkit->AddParameterInt32('out', 'Number of decimal positions', 'decimalPositions', 0);
         $receiverVar[] = $toolkit->AddParameterChar('out', $maxValueSize, 'Value returned', 'value', ''); // set length to $maxValueSize to be safe
@@ -180,23 +186,23 @@ class DataArea
         // "NAME      LIB       " no slash. Left-aligned.
         $twentyCharQualifiedName = $this->getAPIDataAreaName();
 
-        $toolkitParams = array();
-        $toolkitParams [] = $toolkit->AddDataStruct($receiverVar, 'receiver');
-        $toolkitParams [] = $toolkit->AddParameterInt32('in', 'Length of receiver variable', 'receiverLen', $receiverLength);
-        $toolkitParams [] = $toolkit->AddParameterChar('in', 20, 'Data area name', 'DtaaraName', $twentyCharQualifiedName);
+        $toolkitParams = [];
+        $toolkitParams[] = $toolkit->AddDataStruct($receiverVar, 'receiver');
+        $toolkitParams[] = $toolkit->AddParameterInt32('in', 'Length of receiver variable', 'receiverLen', $receiverLength);
+        $toolkitParams[] = $toolkit->AddParameterChar('in', 20, 'Data area name', 'DtaaraName', $twentyCharQualifiedName);
         // Starting position: The first byte of the data area to be retrieved. A value of 1 will identify the first character in the data area. The maximum value allowed for the starting position is 2000. A value of -1 will return all the characters in the data area.
-        $toolkitParams [] = $toolkit->AddParameterInt32('in', 'Starting position requested', 'fromPosition', $adjustedStartRequested);
-        $toolkitParams [] = $toolkit->AddParameterInt32('in', 'Data length requested', 'dataLength', $adjustedLengthRequested);
-        $toolkitParams [] = $toolkit->AddErrorDataStructZeroBytes(); // so errors bubble up to joblog
+        $toolkitParams[] = $toolkit->AddParameterInt32('in', 'Starting position requested', 'fromPosition', $adjustedStartRequested);
+        $toolkitParams[] = $toolkit->AddParameterInt32('in', 'Data length requested', 'dataLength', $adjustedLengthRequested);
+        $toolkitParams[] = $toolkit->AddErrorDataStructZeroBytes(); // so errors bubble up to joblog
 
         // we're using a data structure here so integrity must be on
         // @todo pass as option on the program call
         $dsIntegrity = $toolkit->getOption('dataStructureIntegrity'); // save original value
-        $toolkit->setOptions(array('dataStructureIntegrity'=>true));
+        $toolkit->setOptions(['dataStructureIntegrity' => true]);
 
         $retPgmArr = $toolkit->PgmCall('QWCRDTAA', '', $toolkitParams);
 
-        $toolkit->setOptions(array('dataStructureIntegrity'=>$dsIntegrity)); // restore original value
+        $toolkit->setOptions(['dataStructureIntegrity' => $dsIntegrity]); // restore original value
 
         // check for any errors
         if ($toolkit->getErrorCode()) {
@@ -213,14 +219,16 @@ class DataArea
     /**
      * @param $msg
      */
-    private function setError($msg){
+    private function setError($msg)
+    {
         $this->ErrMessage = $msg;
     }
 
     /**
      * @return mixed
      */
-    public function getError() {
+    public function getError()
+    {
         return $this->ErrMessage;
     }
 
@@ -228,13 +236,14 @@ class DataArea
      * @param $value
      * @param int $fromPosition
      * @param int $dataLen
+     *
      * @throws \Exception
      */
     public function writeDataArea($value, $fromPosition = 0, $dataLen = 0)
     {
         $substring = ''; // init
         if ($fromPosition > 0) {
-            $substring = sprintf("(%d %d)", $fromPosition, $dataLen);
+            $substring = sprintf('(%d %d)', $fromPosition, $dataLen);
         }
 
         // @todo use API instead. Handle numeric and character data., *CHAR and *DEC as well.
@@ -243,26 +252,27 @@ class DataArea
             $this->getQualifiedDataAreaName());
 
         if (!$this->ToolkitSrvObj->CLCommand($cmd)) {
-            $this->ErrMessage =  "Write into Data Area failed." . $this->ToolkitSrvObj->getLastError();
+            $this->ErrMessage = 'Write into Data Area failed.' . $this->ToolkitSrvObj->getLastError();
             throw new \Exception($this->ErrMessage);
         }
     }
 
     /**
-     * requires explicit library
+     * requires explicit library.
      *
      * @param string $DataAreaName
      * @param string $DataAreaLib
+     *
      * @throws \Exception
      */
     public function deleteDataArea($DataAreaName = '', $DataAreaLib = '')
     {
-        $cmd = sprintf("QSYS/DLTDTAARA DTAARA(%s/%s)",
+        $cmd = sprintf('QSYS/DLTDTAARA DTAARA(%s/%s)',
             ($DataAreaLib != '' ? $DataAreaLib : $this->DataAreaLib),
-            ($DataAreaName != NULL ? $DataAreaName : $this->DataAreaName));
+            ($DataAreaName != null ? $DataAreaName : $this->DataAreaName));
 
         if (!$this->ToolkitSrvObj->CLCommand($cmd)) {
-            $this->ErrMessage =  "Delete Data Area failed." . $this->ToolkitSrvObj->getLastError();
+            $this->ErrMessage = 'Delete Data Area failed.' . $this->ToolkitSrvObj->getLastError();
             throw new \Exception($this->ErrMessage);
         }
     }

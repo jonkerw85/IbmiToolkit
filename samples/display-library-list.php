@@ -14,17 +14,17 @@ try {
     exit();
 }
 
-$conn->setOptions(array('stateless' => true));
+$conn->setOptions(['stateless' => true]);
 
-echo "<pre>";
-$rows = $conn->CLInteractiveCommand("DSPLIBL");
+echo '<pre>';
+$rows = $conn->CLInteractiveCommand('DSPLIBL');
 if (!$rows) {
     echo $conn->getLastError();
 } else {
     print_r($rows);
 }
 
-echo "</pre>";
+echo '</pre>';
 ?>
 
 Output will look like:

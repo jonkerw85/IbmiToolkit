@@ -1,6 +1,8 @@
 <?php
+
 namespace ToolkitApiTest;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use ToolkitApi\BinParam;
 use ToolkitApi\CharParam;
@@ -22,16 +24,14 @@ use ToolkitApi\UInt32Param;
 use ToolkitApi\UInt64Param;
 use ToolkitApi\UInt8Param;
 use ToolkitApi\ZonedParam;
-use Exception;
 
 /**
- * Class ToolkitTest
- * @package ToolkitApiTest
+ * Class ToolkitTest.
  */
 final class ToolkitTest extends TestCase
 {
     /**
-     * @var ToolkitInterface $toolkit
+     * @var ToolkitInterface
      */
     protected $toolkit;
 
@@ -119,7 +119,7 @@ final class ToolkitTest extends TestCase
 
     public function testCanAddPackedDecimalParameter()
     {
-        $parameter = $this->toolkit->AddParameterPackDec('both', 7,4, 'INDEC1', 'var3', '001.0001');
+        $parameter = $this->toolkit->AddParameterPackDec('both', 7, 4, 'INDEC1', 'var3', '001.0001');
 
         $this->assertTrue($parameter instanceof PackedDecParam);
     }
@@ -219,7 +219,7 @@ final class ToolkitTest extends TestCase
 
     public function testDatabaseNameOrResourceIsNotArray()
     {
-        $resource = array(1, 2, 3);
+        $resource = [1, 2, 3];
         $this->expectException(Exception::class);
         new Toolkit($resource);
     }
@@ -230,5 +230,4 @@ final class ToolkitTest extends TestCase
         $this->expectException(Exception::class);
         new Toolkit($resource);
     }
-
 }

@@ -1,11 +1,9 @@
 <?php
+
 namespace ToolkitApi;
 
 /**
- * 
  * @todo define common transport class/interface extended/implemented by all transports. They have much in common.
- * 
- * @package ToolkitApi
  */
 class LocalSupp
 {
@@ -16,19 +14,21 @@ class LocalSupp
 
     /**
      * @param $xmlIn
+     *
      * @return string|bool
      */
     public function send($xmlIn)
     {
-        $descriptorspec = array(
-            0 => array("pipe", "r"), // stdin
-            1 => array("pipe", "w"), // stdout
-            2 => array("pipe", "w"), // stderr
-        );
+        $descriptorspec = [
+            0 => ['pipe', 'r'], // stdin
+            1 => ['pipe', 'w'], // stdout
+            2 => ['pipe', 'w'], // stderr
+        ];
         $proc = proc_open($this->getXmlserviceCliPath(), $descriptorspec, $pipes);
         if (!is_resource($proc)) {
-            $this->setErrorCode("LOCAL_EXEC");
-            $this->setErrorMsg("error executing command on local system");
+            $this->setErrorCode('LOCAL_EXEC');
+            $this->setErrorMsg('error executing command on local system');
+
             return false;
         }
         stream_set_blocking($pipes[0], true); // XXX
@@ -39,6 +39,7 @@ class LocalSupp
         // XXX: Do something with stderr
         fclose($pipes[2]);
         proc_close($proc);
+
         return $xmlOut;
     }
 
@@ -92,11 +93,13 @@ class LocalSupp
 
     private function checkCompat()
     {
-        if (!extension_loaded("pcntl")) {
-            $this->setErrorCode("PCNTL_NOT_LOADED");
+        if (!extension_loaded('pcntl')) {
+            $this->setErrorCode('PCNTL_NOT_LOADED');
             $this->setErrorMsg("the process control extension isn't loaded");
+
             return false;
         }
+
         return true;
     }
 
@@ -107,6 +110,7 @@ class LocalSupp
      * @param $user
      * @param $password
      * @param $options
+     *
      * @return LocalSupp|bool
      */
     public function connect($server, $user, $password, $options)
@@ -117,7 +121,7 @@ class LocalSupp
         // stateless, we don't have to do anything
         return $this;
     }
-    
+
     public function disconnect()
     {
     }

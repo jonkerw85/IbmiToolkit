@@ -1,4 +1,5 @@
 <?php
+
 include_once 'authorization.php';
 include_once 'ToolkitService.php';
 
@@ -9,13 +10,13 @@ try {
     exit();
 }
 
-$obj->setToolkitServiceParams(array('InternalKey' => "/tmp/$user",
-                                    'debug'       => true,
-                                    'plug'        => "iPLUG32K"));
-$cmd = "addlible ZENDSVR";
+$obj->setToolkitServiceParams(['InternalKey' => "/tmp/$user",
+                                    'debug' => true,
+                                    'plug' => 'iPLUG32K', ]);
+$cmd = 'addlible ZENDSVR';
 $obj->CLCommand($cmd);
-echo "<pre>";
-$rows = $obj->CLInteractiveCommand("DSPLIBL");
+echo '<pre>';
+$rows = $obj->CLInteractiveCommand('DSPLIBL');
 /*$rows = $obj->CLInteractiveCommand("WRKSYSVAL OUTPUT(*PRINT)");*/
 if (!$rows) {
     echo $obj->getLastError();
@@ -23,7 +24,7 @@ if (!$rows) {
     var_dump($rows);
 }
 
-echo "</pre>";
+echo '</pre>';
 
 /* Do not use the disconnect() function for "state full" connection */
 $obj->disconnect();

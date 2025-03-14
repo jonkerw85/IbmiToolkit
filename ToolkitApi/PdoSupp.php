@@ -23,19 +23,20 @@ final class PdoSupp
     private $pdo;
 
     /**
-     *
      * @todo should perhaps handle this method differently if $options are not passed
      *
-     * @param string $database
-     * @param string $user
-     * @param string $password
+     * @param string     $database
+     * @param string     $user
+     * @param string     $password
      * @param array|null $options
+     *
      * @return bool|PDO
      */
     public function connect($database, $user, $password, $options = null)
     {
         if (!$options) {
             $this->setError();
+
             return false;
         }
 
@@ -43,6 +44,7 @@ final class PdoSupp
 
         if (!$conn instanceof PDO) {
             $this->setError();
+
             return false;
         }
 
@@ -51,7 +53,6 @@ final class PdoSupp
 
     /**
      * PdoSupp constructor.
-     * @param PDO $pdo
      */
     public function __construct(PDO $pdo)
     {
@@ -71,7 +72,7 @@ final class PdoSupp
     /**
      * @param PDO|null $conn
      */
-    protected function setError($conn = null)
+    private function setError($conn = null)
     {
         if ($conn) {
             $this->setErrorCode($conn->errorCode());
@@ -85,7 +86,7 @@ final class PdoSupp
     /**
      * @param string $errorCode
      */
-    protected function setErrorCode($errorCode)
+    private function setErrorCode($errorCode)
     {
         $this->last_errorcode = $errorCode;
     }
@@ -101,7 +102,7 @@ final class PdoSupp
     /**
      * @param string $errorMsg
      */
-    protected function setErrorMsg($errorMsg)
+    private function setErrorMsg($errorMsg)
     {
         $this->last_errormsg = $errorMsg;
     }
@@ -115,11 +116,12 @@ final class PdoSupp
     }
 
     /**
-     * this function used for special stored procedure call only
+     * this function used for special stored procedure call only.
      *
-     * @param PDO $conn
+     * @param PDO    $conn
      * @param string $stmt
-     * @param array $bindArray
+     * @param array  $bindArray
+     *
      * @return string
      */
     public function execXMLStoredProcedure($conn, $stmt, $bindArray)
@@ -128,18 +130,20 @@ final class PdoSupp
 
         if (!$statement) {
             $this->setError($conn);
+
             return false;
         }
 
-        $result = $statement->execute(array(
+        $result = $statement->execute([
             $bindArray['internalKey'],
             $bindArray['controlKey'],
-            $bindArray['inputXml']
-        ));
+            $bindArray['inputXml'],
+        ]);
 
         if (!$result) {
             $this->setError($conn);
-            return "PDO error code: " . $this->pdo->errorCode() . ' msg: ' . $this->pdo->errorInfo();
+
+            return 'PDO error code: ' . $this->pdo->errorCode() . ' msg: ' . $this->pdo->errorInfo();
         }
 
         $outputXml = '';
@@ -147,14 +151,14 @@ final class PdoSupp
         if (!$bindArray['disconnect']) { // a disconnect request won't return data
             // Loop through rows, concatenating XML into a final XML string.
             foreach ($statement->fetchAll() as $row) {
-                // for each row, get XML string from first and only array element, 
+                // for each row, get XML string from first and only array element,
                 // no matter whether assoc or numeric key
-                $xmlChunk = reset($row); 
+                $xmlChunk = reset($row);
                 if ($xmlChunk) {
                     // Remove any "garbage" from after ending </script> tag (there used to be an ODBC clob issue)
-                    if (strstr($xmlChunk , "</script>")) {
-                        $pos = strpos($xmlChunk, "</script>");
-                        $pos += strlen("</script>"); 
+                    if (strstr($xmlChunk, '</script>')) {
+                        $pos = strpos($xmlChunk, '</script>');
+                        $pos += strlen('</script>');
                         $outputXml .= substr($xmlChunk, 0, $pos);
                         break;
                     } else {
@@ -168,18 +172,20 @@ final class PdoSupp
     }
 
     /**
-     * @param PDO $conn
+     * @param PDO    $conn
      * @param string $stmt
+     *
      * @return array
      */
     public function executeQuery($conn, $stmt)
     {
-        $txt = array();
+        $txt = [];
         $statement = $conn->prepare($stmt);
         $result = $statement->execute();
 
         if (!$result) {
             $this->setError($conn);
+
             return $txt;
         }
         foreach ($statement->fetchAll() as $row) {

@@ -1,9 +1,9 @@
 <?php
 /*
 RPG program parameters definition
-				PLIST
-				PARM                    CODE             10
-				PARM                    NAME             10
+                PLIST
+                PARM                    CODE             10
+                PARM                    NAME             10
 
 */
 
@@ -24,17 +24,17 @@ try {
     exit();
 }
 
-$ToolkitServiceObj->setToolkitServiceParams(array('InternalKey' => "/tmp/$user"));
-$code = $_POST ['code'];
+$ToolkitServiceObj->setToolkitServiceParams(['InternalKey' => "/tmp/$user"]);
+$code = $_POST['code'];
 $desc = ' ';
 
 $param[] = $ToolkitServiceObj->AddParameterChar('both', 10, 'CODE', 'CODE', $code);
 $param[] = $ToolkitServiceObj->AddParameterChar('both', 10, 'DESC', 'DESC', $desc);
-$result = $ToolkitServiceObj->PgmCall("COMMONPGM", "ZENDSVR6", $param, null, null);
+$result = $ToolkitServiceObj->PgmCall('COMMONPGM', 'ZENDSVR6', $param, null, null);
 if ($result) {
     showTable($result['io_param']);
 } else {
-    echo "Execution failed.";
+    echo 'Execution failed.';
 }
 
 /* Do not use the disconnect() function for "state full" connection */
