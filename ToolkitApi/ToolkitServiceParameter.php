@@ -135,9 +135,9 @@ class ProgramParameter
             'len'         => 'labelLen',
             'dou'         => 'labelDoUntil',
             'enddo'       => 'labelEndDo',
-            'ccsidBefore' => 'ccsidBefore',
-            'ccsidAfter'  => 'ccsidAfter',
-            'useHex'      => 'useHex',
+            'ccsidBefore' => '_ccsidBefore',
+            'ccsidAfter'  => '_ccsidAfter',
+            'useHex'      => '_useHex',
         ];
 
         // go through all properties and set the ones that are valid,

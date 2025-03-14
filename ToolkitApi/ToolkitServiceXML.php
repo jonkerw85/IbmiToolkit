@@ -375,7 +375,7 @@ class XMLWrapper
      *
      * @return string
      */
-    public function buildXmlIn($inputOutputParams = null, array $returnParams = null,
+    public function buildXmlIn($inputOutputParams = null, ?array $returnParams = null,
                     $pgm = '',
                     $lib = '',
                     $function = null)
@@ -763,7 +763,7 @@ class XMLWrapper
             // @todo could convert 4040 into blanks
             if (isset($attr->dtsdate) && (((string) $attr->dtsdate) == 'on')
              && $element[$dataVarName] && ($element[$dataVarName] != '4040404040404040')) {
-                if (!isset($dateTimeApi)) {
+                if (!isset($dateTimeApi)) { // @phpstan-ignore isset.variable
                     $dateTimeApi = new DateTimeApi($this->ToolkitSrvObj);
                 }
 

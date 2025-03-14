@@ -789,7 +789,7 @@ class Toolkit implements ToolkitInterface
             }
         }
 
-        unset($this->XMLWrapper);
+        $this->XMLWrapper = null;
 
         // output array includes in/out parameters and return parameters.
         return $outputParamArray;
@@ -935,7 +935,7 @@ class Toolkit implements ToolkitInterface
         }
 
         // workaround: XMLSERVICE as of 1.7.4 returns a single space instead of empty string when no content was requested.
-        $result = trim($result);
+        $result = isset($result) ? trim($result) : null; // Ensure $result is always defined
 
         if ($this->isDebug() && $result) {
             $end = microtime(true);
@@ -1240,12 +1240,12 @@ class Toolkit implements ToolkitInterface
             // if we expect to receive data, extract it from the XML and return it.
             $outputParamArray = $this->XMLWrapper->getRowsFromXml($outputXml, $parentTag);
 
-            unset($this->XMLWrapper);
+            $this->XMLWrapper = null;
 
             return $outputParamArray;
         } else {
             // don't expect data. Return true/false (success);
-            unset($this->XMLWrapper);
+            $this->XMLWrapper = null;
 
             return $successFlag;
         }
@@ -2073,7 +2073,8 @@ class Toolkit implements ToolkitInterface
      */
     public function getXmlOut()
     {
-        return $this->outputXml;
+        throw new \Exception('Not implemented.');
+        //return $this->outputXml;
     }
 
     /**
@@ -2120,7 +2121,7 @@ class Toolkit implements ToolkitInterface
         $ds[] = self::AddParameterInt32('out', 'Bytes available', 'err_bytes_avail', $ErrBytesAv);
         $ds[] = self::AddParameterChar('out', 7, 'Exception ID', 'exceptId', $ErrCPF);
         $ds[] = self::AddParameterChar('out', 1, 'Reserved', 'reserved', $ErrRes);
-        $ds[] = self::AddParameterHole('out', 128, 'Exception data', 'excData', $ErrEx); // can be bad XML so make it a hole
+        $ds[] = self::AddParameterHole(128, 'Exception data'); // can be bad XML so make it a hole
 
         return $ds;
     }
