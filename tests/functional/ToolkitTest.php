@@ -45,7 +45,7 @@ final class ToolkitTest extends TestCase
             $this->connectionOptions['username'],
             $this->connectionOptions['password'],
             [
-                'platform' => $this->connectionOptions['platform'],
+                'platform'         => $this->connectionOptions['platform'],
                 'platform_options' => [
                     'quote_identifiers' => $this->connectionOptions['platform_options']['quote_identifiers'],
                 ],

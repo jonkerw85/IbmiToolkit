@@ -26,8 +26,8 @@ $dbConnectionType = 'pdo';
 // create db connection
 try {
     $dbconn = new PDO($connString, $user, $pw, [
-                      PDO::ATTR_PERSISTENT => $persistence,
-                      PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
+        PDO::ATTR_PERSISTENT => $persistence,
+        PDO::ATTR_ERRMODE    => PDO::ERRMODE_WARNING,
     ]);
 } catch (PDOException $e) {
     exit('PDO connection failed: ' . $e->getMessage());

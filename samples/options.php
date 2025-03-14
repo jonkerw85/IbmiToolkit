@@ -20,8 +20,9 @@ $conn->setOptions(['stateless' => true]);  // specify true unless you have a goo
 // The stateful technique is useful for accessing QTEMP and *LDA resources in this unique job.
 // The job will remain running until ended *IMMED or timed out using a timeout option (see below)
 // Note: omitting InternalKey in stateful mode would cause a default key of '/tmp/Toolkit' to be used, which would mean everyone is sharing a single XMLSERVICE job.
-$conn->setOptions(['stateless' => false,
-                        'InternalKey' => '/tmp/alan2',
+$conn->setOptions([
+    'stateless'   => false,
+    'InternalKey' => '/tmp/alan2',
 ]);
 
 // # 'idleTimeout' => $idleTimeoutSeconds
@@ -30,9 +31,10 @@ $conn->setOptions(['stateless' => false,
 // This option will tell XMLSERVICE to use timeout setting *idle(3600/kill). For advanced timeout options, see: http://yips.idevcloud.com/wiki/index.php/XMLService/XMLSERVICETIMEOUT
 
 // In the example below, the XMLSERVICE job will end after 3600 seconds (one hour) of not being used.
-$conn->setOptions(['stateless' => false,
-                        'InternalKey' => '/tmp/alan2',
-                        'idleTimeout' => 3600,
+$conn->setOptions([
+    'stateless'   => false,
+    'InternalKey' => '/tmp/alan2',
+    'idleTimeout' => 3600,
 ]);
 
 // # 'customControl' => $customControlKeys
@@ -43,19 +45,22 @@ $conn->setOptions(['stateless' => false,
 
 // Example #1: *java when calling an RPG program that includes java.
 
-$conn->setOptions(['stateless' => true,
-                        'customControl' => '*java',
+$conn->setOptions([
+    'stateless'     => true,
+    'customControl' => '*java',
 ]);
 
 // Example #2: *call. Useful for setting a timeout on a hanging or looping RPG program. This example for stateless mode.
-$conn->setOptions(['stateless' => true,
-                        'customControl' => '*call(15/kill/server)', // return control to PHP after waiting 15 seconds. CPF is available in error code as well.
+$conn->setOptions([
+    'stateless'     => true,
+    'customControl' => '*call(15/kill/server)', // return control to PHP after waiting 15 seconds. CPF is available in error code as well.
 ]);
 
 // Example #3: *call and *sbmjob. Useful for setting a timeout on a hanging or looping RPG program. This example for stateful (IPC) mode.
-$conn->setOptions(['stateless' => false, // explicitly be stateful when using this timeout option
-                        'internalKey' => '/tmp/tkitjob2', // arbitrary directory name under /tmp to represent unique job
-                        'customControl' => '*call(15/kill/server) *sbmjob', // return control to PHP after waiting 15 seconds. CPF is available in error code as well.
+$conn->setOptions([
+    'stateless'     => false, // explicitly be stateful when using this timeout option
+    'internalKey'   => '/tmp/tkitjob2', // arbitrary directory name under /tmp to represent unique job
+    'customControl' => '*call(15/kill/server) *sbmjob', // return control to PHP after waiting 15 seconds. CPF is available in error code as well.
 ]);
 
 // # 'debug' => true or false
@@ -68,8 +73,9 @@ $conn->setOptions(['stateless' => false, // explicitly be stateful when using th
 // and, if the file doesn't yet exist, *RWX access to the parent directory so PHP can create the file.
 // The file can get large, so we recommend setting debug => false when logging is not needed.
 
-$conn->setOptions(['debug' => true,
-                        'debugLogFile' => '/my/path/tkit_debug.log',
+$conn->setOptions([
+    'debug'        => true,
+    'debugLogFile' => '/my/path/tkit_debug.log',
 ]);
 
 // sbmjobCommand is an advanced keyword. Use it when you need to set your own job name or other parameters for a stateful toolkit job.
@@ -81,8 +87,9 @@ $jobName = 'MYTOOLKIT3';
 $jobQueue = 'QSYS/QSYSNOMAX';
 
 // specify stateful mode and the internal key (IPC) we established earlier.
-$conn->setOptions(['stateless' => false,
-                   'internalKey' => $internalKey,
+$conn->setOptions([
+    'stateless'   => false,
+    'internalKey' => $internalKey,
 ]);
 
 // Set up values needed in the sbmjob command
@@ -93,7 +100,8 @@ $jobqParam = "JOBQ($jobQueue)";
 
 // Fully customize where and how XMLSERVICE runs by building the SBMJOB command and set it up in the toolkit
 $sbmjobCommand = "SBMJOB CMD(CALL PGM({$serviceLibrary}/XMLSERVICE) PARM('$ipc')) {$jobNameParam} {$jobqParam}";
-$conn->setOptions(['sbmjobCommand' => $sbmjobCommand,
-                   'sbmjobParams' => '', // empty because set these values in sbmjobCommand
-                   'customControl' => '*sbmjob', // required when setting sbmjobCommand
+$conn->setOptions([
+    'sbmjobCommand' => $sbmjobCommand,
+    'sbmjobParams'  => '', // empty because set these values in sbmjobCommand
+    'customControl' => '*sbmjob', // required when setting sbmjobCommand
 ]);

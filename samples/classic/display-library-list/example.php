@@ -10,9 +10,11 @@ try {
     exit();
 }
 
-$obj->setToolkitServiceParams(['InternalKey' => "/tmp/$user",
-                                    'debug' => true,
-                                    'plug' => 'iPLUG32K', ]);
+$obj->setToolkitServiceParams([
+    'InternalKey' => "/tmp/$user",
+    'debug'       => true,
+    'plug'        => 'iPLUG32K',
+]);
 $cmd = 'addlible ZENDSVR';
 $obj->CLCommand($cmd);
 echo '<pre>';

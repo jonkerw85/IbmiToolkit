@@ -469,8 +469,10 @@ function i5_connect($host = '', $user = '', $password = '', $options = [])
     }
 
     // set IPC and other settings
-    $serviceParams = ['internalKey' => $ipc,
-                           'stateless' => $stateless, ];
+    $serviceParams = [
+        'internalKey' => $ipc,
+        'stateless'   => $stateless,
+    ];
 
     // additional settings
     if ($idleTimeout) {
@@ -1340,10 +1342,10 @@ function i5_jobLog_list($elements = [], $connection = null)
     $keysToRequest = ['0101'];
 
     $fieldInfoToRequest = [
-         ['var' => '0101', 'type' => '9a', 'comment' => 'Alert option', 'reservedLen' => 7],
-         // 0201 could be 298a or more!
-         //array('var'=>'0201', 'type'=>'100b', 'comment'=>'Replacement data or impromptu message text', 'reservedLen'=>7)
-         ];
+        ['var' => '0101', 'type' => '9a', 'comment' => 'Alert option', 'reservedLen' => 7],
+        // 0201 could be 298a or more!
+        //array('var'=>'0201', 'type'=>'100b', 'comment'=>'Replacement data or impromptu message text', 'reservedLen'=>7)
+    ];
 
     $fieldInfoToRequest = [];
 

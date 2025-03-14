@@ -11,7 +11,8 @@ use ToolkitApi\ToolkitInterface;
 class DataDescriptionPcml extends DataDescription
 {
     // array of simple types, PCML to old toolkit. Used in singlePcmlToArray().
-    protected $_pcmlTypeMap = ['char' => I5_TYPE_CHAR,
+    protected $_pcmlTypeMap = [
+        'char'   => I5_TYPE_CHAR,
         'packed' => I5_TYPE_PACKED,
         // 4 byte float
         'float' => I5_TYPE_FLOAT,
@@ -24,8 +25,9 @@ class DataDescriptionPcml extends DataDescription
     ];
 
     // PCML usage mapping
-    protected $_pcmlInoutMap = ['input' => I5_IN,
-        'output' => I5_OUT,
+    protected $_pcmlInoutMap = [
+        'input'       => I5_IN,
+        'output'      => I5_OUT,
         'inputoutput' => I5_INOUT,
         // inherit means inherit from parent element, and if no parent element, do INOUT.
         // TODO implement "inherit" more precisely, checking parent element's usage.

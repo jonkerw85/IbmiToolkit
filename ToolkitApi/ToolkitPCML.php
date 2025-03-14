@@ -18,21 +18,23 @@ class ToolkitPcml
     protected $_countersAndCounted = []; // 'CarCount' => 'Cars'.  counter also used as label.
 
     // array of simple types, PCML to XMLSERVICE toolkit, with sprintf-style percent formatting.
-    protected $_pcmlTypeMap = ['char' => '%sa',
+    protected $_pcmlTypeMap = [
+        'char'   => '%sa',
         'packed' => '%sp%s',
-        'float' => '4f',   // 4-byte float
+        'float'  => '4f',   // 4-byte float
         'struct' => 'ds',   // data structure
         // omit INT from type map because we'll need program logic to determine if short or regular int.
         //              'short'   => "5i0",  // int16, 2 bytes
         //              'int'     => "10i0", // int32, 4 bytes
         'zoned' => '%ss%s', // e.g. 5s2
-        'byte' => '%sb', // binary (hex)
-        'hole' => '%sh', // not a PCML type but XMLSERVICE can handle it, so let's be prepared.
+        'byte'  => '%sb', // binary (hex)
+        'hole'  => '%sh', // not a PCML type but XMLSERVICE can handle it, so let's be prepared.
     ];
 
     // PCML usage mapping
-    protected $_pcmlInoutMap = ['input' => 'in',
-        'output' => 'out',
+    protected $_pcmlInoutMap = [
+        'input'       => 'in',
+        'output'      => 'out',
         'inputoutput' => 'both',
         // inherit means inherit from parent element, and if no parent element, do INOUT.
         // @todo implement "inherit" more precisely, checking parent element's usage.

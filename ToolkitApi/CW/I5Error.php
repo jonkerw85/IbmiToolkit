@@ -58,8 +58,16 @@ class I5Error
     {
         // the array (eventually returned by i5_error()
         // likes to have both numeric and alphanumeric keys.
-        $i5ErrorArray = [0 => $errNum,     1 => $errCat,      2 => $errMsg,    3 => $errDesc,
-            'num' => $errNum, 'cat' => $errCat, 'msg' => $errMsg, 'desc' => $errDesc, ];
+        $i5ErrorArray = [
+            0      => $errNum,
+            1      => $errCat,
+            2      => $errMsg,
+            3      => $errDesc,
+            'num'  => $errNum,
+            'cat'  => $errCat,
+            'msg'  => $errMsg,
+            'desc' => $errDesc,
+        ];
 
         self::$_i5Error = $i5ErrorArray;
     }

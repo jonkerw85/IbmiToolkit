@@ -9,6 +9,8 @@ return (new PhpCsFixer\Config())
         '@Symfony' => true, // PHP Extended Rules (improves consistency)
         'yoda_style' => false, // Prevent Yoda conditions
         'concat_space' => ['spacing' => 'one'], // Adds a space around concatenation
+        'binary_operator_spaces' => ['operators' => ['=>' => 'align']],
+        'array_indentation' => true
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(false) // Prevent risky modifications for now

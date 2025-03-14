@@ -163,10 +163,12 @@ class UserSpace
         }
 
         // return selected values from return array.
-        return ['Space Size' => $retArr['spacesize'],
+        return [
+            'Space Size'              => $retArr['spacesize'],
             'Automatic extendibility' => $retArr['extend_automatic'],
-            'Initial value' => $retArr['initval'],
-            'User space library name' => $retArr['uslib'], ];
+            'Initial value'           => $retArr['initval'],
+            'User space library name' => $retArr['uslib'],
+        ];
     }
 
     /**

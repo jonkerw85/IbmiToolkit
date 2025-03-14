@@ -110,17 +110,18 @@ class SpooledFiles
         $list = null;
 
         foreach ($SpoolInfListArr as $tmparr) {
-            $list[] = ['Number' => substr($tmparr, 0, 4),
-                'Name' => substr($tmparr, 4, 10),
-                'JobNumber' => substr($tmparr, 14, 6),
-                'JobName' => substr($tmparr, 20, 10),
-                'JobUser' => substr($tmparr, 30, 10),
-                'UserData' => substr($tmparr, 40, 10),
-                'QueueName' => substr($tmparr, 50, 20),
+            $list[] = [
+                'Number'     => substr($tmparr, 0, 4),
+                'Name'       => substr($tmparr, 4, 10),
+                'JobNumber'  => substr($tmparr, 14, 6),
+                'JobName'    => substr($tmparr, 20, 10),
+                'JobUser'    => substr($tmparr, 30, 10),
+                'UserData'   => substr($tmparr, 40, 10),
+                'QueueName'  => substr($tmparr, 50, 20),
                 'TotalPages' => substr($tmparr, 70, 5),
-                'Status' => substr($tmparr, 75, 10),
-                'DateOpen' => substr($tmparr, 85, 7),
-                'TimeOpen' => substr($tmparr, 92, 6),
+                'Status'     => substr($tmparr, 75, 10),
+                'DateOpen'   => substr($tmparr, 85, 7),
+                'TimeOpen'   => substr($tmparr, 92, 6),
             ];
         }
 

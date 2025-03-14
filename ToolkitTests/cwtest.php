@@ -289,15 +289,15 @@ if ($doPcml) {
     $alph2value = 4;
 
     $paramIn = [
-    'S1' => ['ZOND' => 54.77, 'PACK1' => 16.2, 'ALPH1' => 'MyValue'],
-    'S2' => ['ZOND2' => 44.66, 'PACK2' => 24444.99945, 'PACK3' => $pack3value, 'ALPH2' => $alph2value],
+        'S1' => ['ZOND' => 54.77, 'PACK1' => 16.2, 'ALPH1' => 'MyValue'],
+        'S2' => ['ZOND2' => 44.66, 'PACK2' => 24444.99945, 'PACK3' => $pack3value, 'ALPH2' => $alph2value],
     ];
 
     // now we need to define where to place output values; it will create new local variables
     $paramOut = [
-                        'S1' => 'S1_Value', 'S2' => 'S2_Value',
-                        'CH10' => 'CH10_Value', 'CH11' => 'CH11_Value', 'CH12' => 'CH12_Value', 'CH13' => 'CH13_Value',
-                        'CODE' => 'Code_Value', 'PACK' => 'Pack',
+        'S1'   => 'S1_Value', 'S2' => 'S2_Value',
+        'CH10' => 'CH10_Value', 'CH11' => 'CH11_Value', 'CH12' => 'CH12_Value', 'CH13' => 'CH13_Value',
+        'CODE' => 'Code_Value', 'PACK' => 'Pack',
     ];
     echo 'About to do complex PCML program call.';
     $success = i5_program_call($pgmHandle, $paramIn, $paramOut);
@@ -335,10 +335,10 @@ $bigDesc = [
 
 $bigInputValues = [
     'BIGDS' => [
-        'P1' => ['t1', 't2', 't3', 't4', 't5'],
+        'P1'  => ['t1', 't2', 't3', 't4', 't5'],
         'P2C' => 2,
-        'P2' => ['a', 'b'],
-        'PS' => [
+        'P2'  => ['a', 'b'],
+        'PS'  => [
             ['PS1' => 'test1', 'PS2' => 'test2', 'PS3' => 'test3'],
             ['PS1' => 'test3', 'PS2' => 'test4', 'PS3' => 'test5'],
         ],
@@ -451,21 +451,21 @@ if ($doDataQueue) {
         'DSName' => 'PS',
         'DSParm' => [
             [
-            'type' => 0,
-            'name' => 'PS1',
-            'length' => '10',
+                'type'   => 0,
+                'name'   => 'PS1',
+                'length' => '10',
             ],
 
             [
-            'type' => 6,
-            'name' => 'PS2',
-            'length' => '10.4',
+                'type'   => 6,
+                'name'   => 'PS2',
+                'length' => '10.4',
             ],
 
             [
-            'type' => 0,
-            'name' => 'PS3',
-            'length' => '10',
+                'type'   => 0,
+                'name'   => 'PS3',
+                'length' => '10',
             ],
         ],
     ];
@@ -626,8 +626,8 @@ if ($doPgmCallSimple) {
     ];
 
     $desc = [
-         0 => ['type' => 0, 'name' => 'code', 'length' => 10, 'io' => 3],
-         1 => ['type' => 0, 'name' => 'name', 'length' => 10, 'io' => 3],
+        0 => ['type' => 0, 'name' => 'code', 'length' => 10, 'io' => 3],
+        1 => ['type' => 0, 'name' => 'name', 'length' => 10, 'io' => 3],
     ];
 
     echo "<b>About to call $progname with two char parameters.</b><BR>";
@@ -675,15 +675,15 @@ if ($doPgmCallComplex) {
     /*Call a program with parameters that include a DS */
 
     $desc = [
-    ['Name' => 'P1', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10, 'Count' => 5],
-    ['Name' => 'P2C', 'IO' => I5_INOUT, 'Type' => I5_TYPE_LONG, 'Length' => 4],
-    ['Name' => 'P2', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 1, 'CountRef' => 'P2C'],
-    ['DSName' => 'PS', 'Count' => 2, 'DSParm' => [
-        ['Name' => 'PS1', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10],
-        ['Name' => 'PS2', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10],
-        ['Name' => 'PS3', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10],
-    ]],
-];
+        ['Name' => 'P1', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10, 'Count' => 5],
+        ['Name' => 'P2C', 'IO' => I5_INOUT, 'Type' => I5_TYPE_LONG, 'Length' => 4],
+        ['Name' => 'P2', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 1, 'CountRef' => 'P2C'],
+        ['DSName' => 'PS', 'Count' => 2, 'DSParm' => [
+            ['Name' => 'PS1', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10],
+            ['Name' => 'PS2', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10],
+            ['Name' => 'PS3', 'IO' => I5_INOUT, 'Type' => I5_TYPE_CHAR, 'Length' => 10],
+        ]],
+    ];
 
     $prog = i5_program_prepare($progname, $desc);
     if ($prog === false) {
@@ -696,15 +696,15 @@ if ($doPgmCallComplex) {
 
     // The nameless elements in array.
     $params1 = [
-['PS1' => 'test1', 'PS2' => 'test2', 'PS3' => 'test3'],
-['PS1' => 'test3', 'PS2' => 'test4', 'PS3' => 'test5'],
-];
+        ['PS1' => 'test1', 'PS2' => 'test2', 'PS3' => 'test3'],
+        ['PS1' => 'test3', 'PS2' => 'test4', 'PS3' => 'test5'],
+    ];
 
     $params2 = [
-'P1' => ['t1', 't2', 't3', 't4', 't5'],
-'P2C' => 2,
-'P2' => ['a', 'b'],
-'PS' => $params1, ];
+        'P1'  => ['t1', 't2', 't3', 't4', 't5'],
+        'P2C' => 2,
+        'P2'  => ['a', 'b'],
+        'PS'  => $params1, ];
     $retvals = ['P1' => 'P1', 'PS' => 'PS', 'P2' => 'P2', 'P2C' => 'P2C'];
 
     $ret = i5_program_call($prog, $params2, $retvals);
@@ -758,9 +758,9 @@ $cmdString = 'RTVJOBA';
 $input = [];
 // we want variable name ccsid to be created
 $output = ['ccsid' => ['ccsid', 'dec(5 0)'],
-                'dftccsid' => ['defaultCcsid', 'dec(5 0)'],
-                'curuser' => 'currentUser', 'nbr' => 'jobNumber', 'job' => 'jobName', 'user' => 'jobUser',
-                               'usrlibl' => 'userLibl', ];
+    'dftccsid'     => ['defaultCcsid', 'dec(5 0)'],
+    'curuser'      => 'currentUser', 'nbr' => 'jobNumber', 'job' => 'jobName', 'user' => 'jobUser',
+    'usrlibl'      => 'userLibl', ];
 $start = microtime(true);
 $commandSuccessful = i5_command($cmdString, $input, $output, $conn);
 if (function_exists('i5_output')) {
@@ -1004,12 +1004,12 @@ if ($doAdoptAuthority) {
         $input = [];
 
         $output = ['ccsid' => ['ccsid', 'dec(5 0)'],
-                        'dftccsid' => ['defaultCcsid', 'dec(5 0)'],
-                        'curuser' => 'currentUser',
-                        'nbr' => 'jobNumber',
-                        'job' => 'jobName',
-                        'user' => 'jobUser',
-                        'usrlibl' => 'userLibl', ];
+            'dftccsid'     => ['defaultCcsid', 'dec(5 0)'],
+            'curuser'      => 'currentUser',
+            'nbr'          => 'jobNumber',
+            'job'          => 'jobName',
+            'user'         => 'jobUser',
+            'usrlibl'      => 'userLibl', ];
         $commandSuccessful = i5_command($cmdString, $input, $output, $conn);
         if (function_exists('i5_output')) {
             extract(i5_output());

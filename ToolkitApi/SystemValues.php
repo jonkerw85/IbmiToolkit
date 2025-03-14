@@ -55,10 +55,12 @@ class SystemValues
                 $tmparr = trim($tmparray[++$i]);
                 if (substr($tmparr, 0, 1) == 'Q') {
                     $len = strlen($tmparr);
-                    $sysvals[] = ['Name' => substr($tmparr, 0, 10),
-                        'CurrentValue' => substr($tmparr, 15, 32),
-                        'ShippedValue' => substr($tmparr, 47, 32),
-                        'Description' => substr($tmparr, 79, ($len - 79)), ];
+                    $sysvals[] = [
+                        'Name'           => substr($tmparr, 0, 10),
+                        'CurrentValue'   => substr($tmparr, 15, 32),
+                        'ShippedValue'   => substr($tmparr, 47, 32),
+                        'Description'    => substr($tmparr, 79, ($len - 79)),
+                    ];
                 }
             }
 

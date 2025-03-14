@@ -66,52 +66,55 @@ class Toolkit implements ToolkitInterface
     // options that can be set at any time
     // Set them with setOptions or setToolkitServiceParams
     // Get them with getOption or getToolkitServiceParam
-    protected $_options = ['plug' => 'iPLUG512K', //for ibm_db2. for odbc $plug='iPLUGR512K'. consider 4K with small data
-                                'plugSize' => '512K', // 4K, 32K, 512K, 65K, 512K, 1M, 5M, 10M, 15M
-                                'plugPrefix' => 'iPLUG', // iPLUG (ibm_db2) or iPLUGR (odbc)
-                                'XMLServiceLib' => XMLSERVICELIB, // library containing XMLSERVICE
-                                'HelperLib' => ZSTOOLKITLIB, // library containing Zend Server's RPG service program (ZSXMLSRV by default) that handles some of the toolkit's duties.
-                                'v5r4' => false, // whether to ask XMLSERVICE to carefully use features that v5r4 can handle
-                                'sbmjobParams' => '', // XMLSERVICE itself will provide good defaults in most cases (in production ZENDSVR(6)/ZSVR_JOBD/XTOOLKIT. In test mode, QSYS/QSRVJOB/XTOOLKIT). See PLUGCONF1 and 2
-                                'debug' => false,
-                                'debugLogFile' => '/usr/local/zendsvr6/var/log/debug.log',
-                             // CCSID/Hex at a global/request level. These properties are also defined at a parameter object level.
-                                'ccsidBefore' => '',
-                                'ccsidAfter' => '',
-                                'useHex' => false,
-                                'paseCcsid' => '', // PASE CCSID for <sh> pase such as WRKACTJOB
-                                'trace' => false, // whether to enable XMLSERVICE internal log
-                                'sbmjobCommand' => '', // optional complete override of SBMJOB command when new toolkit job is submitted
-                                'prestart' => false,
-                                'stateless' => false,
-                                'performance' => false, // whether to enable performance collection (not fully implemented)
-                                'idleTimeout' => '', // created for Compat. Wrapper (CW)
-                                'cdata' => true, // whether to ask XMLSERVICE to wrap its output in CDATA to protect reserved XML characters
-                                'internalKey' => XMLINTERNALKEY, // consistent naming style
-                                'encoding' => 'ISO-8859-1', /*English. Hebrew:ISO-8859-8 */
-                                'schemaSep' => '.', // schema separator. A dot or slash
-                                'parseOnly' => false, // do not run any program; simply parse, expand dim if necessary, and return.
-                                'parseDebugLevel' => 1, // 1-9 debug level when in parseOnly mode
-                                'license' => false, // true to receive license/version information
-                                'transport' => false, // check proc call speed (no XML calls)
-                                'dataStructureIntegrity' => false, // New in 1.4.0. Specify true to preserve integrity of data structures. If false (default), explode inner values out of the ds.
-                                'arrayIntegrity' => false, // New in 1.4.0. Specify true to preserve integrity of arrays (to create true named arrays, not merely sequentially numbered elements).
-                                'customControl' => '', // any string you want. Will be concatenated to control key string after a single space.
-                                'transportType' => 'ibm_db2', // can override in getInstance constructor as well
-                                'httpTransportUrl' => '', // for HTTP REST transport
-                                'timeReport' => false, // *fly or *nofly; if true, return tick counts instead of data.
-                                'xmlserviceCliPath' => '/QOpenSys/pkgs/bin/xmlservice-cli', // The path to the xmlservice-cli program (or compatible API) on the IBM i system. The full path should be used because $PATH may not be set up.
+    protected $_options = [
+        'plug'          => 'iPLUG512K', //for ibm_db2. for odbc $plug='iPLUGR512K'. consider 4K with small data
+        'plugSize'      => '512K', // 4K, 32K, 512K, 65K, 512K, 1M, 5M, 10M, 15M
+        'plugPrefix'    => 'iPLUG', // iPLUG (ibm_db2) or iPLUGR (odbc)
+        'XMLServiceLib' => XMLSERVICELIB, // library containing XMLSERVICE
+        'HelperLib'     => ZSTOOLKITLIB, // library containing Zend Server's RPG service program (ZSXMLSRV by default) that handles some of the toolkit's duties.
+        'v5r4'          => false, // whether to ask XMLSERVICE to carefully use features that v5r4 can handle
+        'sbmjobParams'  => '', // XMLSERVICE itself will provide good defaults in most cases (in production ZENDSVR(6)/ZSVR_JOBD/XTOOLKIT. In test mode, QSYS/QSRVJOB/XTOOLKIT). See PLUGCONF1 and 2
+        'debug'         => false,
+        'debugLogFile'  => '/usr/local/zendsvr6/var/log/debug.log',
+        // CCSID/Hex at a global/request level. These properties are also defined at a parameter object level.
+        'ccsidBefore'            => '',
+        'ccsidAfter'             => '',
+        'useHex'                 => false,
+        'paseCcsid'              => '', // PASE CCSID for <sh> pase such as WRKACTJOB
+        'trace'                  => false, // whether to enable XMLSERVICE internal log
+        'sbmjobCommand'          => '', // optional complete override of SBMJOB command when new toolkit job is submitted
+        'prestart'               => false,
+        'stateless'              => false,
+        'performance'            => false, // whether to enable performance collection (not fully implemented)
+        'idleTimeout'            => '', // created for Compat. Wrapper (CW)
+        'cdata'                  => true, // whether to ask XMLSERVICE to wrap its output in CDATA to protect reserved XML characters
+        'internalKey'            => XMLINTERNALKEY, // consistent naming style
+        'encoding'               => 'ISO-8859-1', /*English. Hebrew:ISO-8859-8 */
+        'schemaSep'              => '.', // schema separator. A dot or slash
+        'parseOnly'              => false, // do not run any program; simply parse, expand dim if necessary, and return.
+        'parseDebugLevel'        => 1, // 1-9 debug level when in parseOnly mode
+        'license'                => false, // true to receive license/version information
+        'transport'              => false, // check proc call speed (no XML calls)
+        'dataStructureIntegrity' => false, // New in 1.4.0. Specify true to preserve integrity of data structures. If false (default), explode inner values out of the ds.
+        'arrayIntegrity'         => false, // New in 1.4.0. Specify true to preserve integrity of arrays (to create true named arrays, not merely sequentially numbered elements).
+        'customControl'          => '', // any string you want. Will be concatenated to control key string after a single space.
+        'transportType'          => 'ibm_db2', // can override in getInstance constructor as well
+        'httpTransportUrl'       => '', // for HTTP REST transport
+        'timeReport'             => false, // *fly or *nofly; if true, return tick counts instead of data.
+        'xmlserviceCliPath'      => '/QOpenSys/pkgs/bin/xmlservice-cli', // The path to the xmlservice-cli program (or compatible API) on the IBM i system. The full path should be used because $PATH may not be set up.
     ];
 
     // plug size to bytes cross-reference
-    protected $_dataSize = ['4K' => 4096,
-                                 '32K' => 32000,
-                                 '65K' => 65000,
-                                 '512K' => 512000,
-                                 '1M' => 1000000,
-                                 '5M' => 5000000,
-                                 '10M' => 10000000,
-                                 '15M' => 15000000, ];
+    protected $_dataSize = [
+        '4K'   => 4096,
+        '32K'  => 32000,
+        '65K'  => 65000,
+        '512K' => 512000,
+        '1M'   => 1000000,
+        '5M'   => 5000000,
+        '10M'  => 10000000,
+        '15M'  => 15000000,
+    ];
 
     protected $serviceParams;
     protected $optionalParamNames;
@@ -309,13 +312,15 @@ class Toolkit implements ToolkitInterface
      */
     protected function getDefaultServiceParams()
     {
-        return ['XMLServiceLib' => $this->getConfigValue('system', 'XMLServiceLib', 'ZENDSVR6'),
-            'HelperLib' => $this->getConfigValue('system', 'HelperLib', 'ZENDSVR6'),
-            'debug' => $this->getConfigValue('system', 'debug', false),
-            'debugLogFile' => $this->getConfigValue('system', 'debugLogFile', false),
-            'encoding' => $this->getConfigValue('system', 'encoding', 'ISO-8859-1'),
-            'parseOnly' => $this->getConfigValue('testing', 'parse_only', false),
-            'parseDebugLevel' => $this->getConfigValue('testing', 'parse_debug_level', null), ];
+        return [
+            'XMLServiceLib'   => $this->getConfigValue('system', 'XMLServiceLib', 'ZENDSVR6'),
+            'HelperLib'       => $this->getConfigValue('system', 'HelperLib', 'ZENDSVR6'),
+            'debug'           => $this->getConfigValue('system', 'debug', false),
+            'debugLogFile'    => $this->getConfigValue('system', 'debugLogFile', false),
+            'encoding'        => $this->getConfigValue('system', 'encoding', 'ISO-8859-1'),
+            'parseOnly'       => $this->getConfigValue('testing', 'parse_only', false),
+            'parseDebugLevel' => $this->getConfigValue('testing', 'parse_debug_level', null),
+        ];
     }
 
     /**
@@ -970,10 +975,10 @@ class Toolkit implements ToolkitInterface
 
         $bindArray = [
             'internalKey' => $internalKey,
-            'controlKey' => $controlKeyString,
-            'inputXml' => $inputXml,
-            'outputXml' => '',
-            'disconnect' => $disconnect,
+            'controlKey'  => $controlKeyString,
+            'inputXml'    => $inputXml,
+            'outputXml'   => '',
+            'disconnect'  => $disconnect,
         ];
 
         // if debug mode, log control key, stored procedure statement, and input XML.
@@ -1409,13 +1414,15 @@ class Toolkit implements ToolkitInterface
      */
     public static function AddParameter($type, $io, $comment, $varName = '', $value = '', $varying = 'off', $dimension = 0)
     {
-        return ['type' => $type, // storage
-                      'io' => $io, // in/out/both
-                      'comment' => $comment, // comment
-                      'var' => $varName, // variable name
-                      'data' => $value, // value
-                      'varying' => $varying, // varying on/varying off
-                      'dim' => $dimension, ]; // number of array elements
+        return [
+            'type'     => $type, // storage
+            'io'       => $io, // in/out/both
+            'comment'  => $comment, // comment
+            'var'      => $varName, // variable name
+            'data'     => $value, // value
+            'varying'  => $varying, // varying on/varying off
+            'dim'      => $dimension, // number of array elements
+        ];
     }
 
     /**

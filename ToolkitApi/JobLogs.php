@@ -211,16 +211,16 @@ class JobLogs
     private function parseJobInfString($jobinfo)
     {
         return [
-            'JobName' => substr($jobinfo, 0, 10),
-            'JobUser' => substr($jobinfo, 10, 10),
-            'JobNumber' => substr($jobinfo, 20, 6),
-            'JobStatus' => substr($jobinfo, 26, 10),
-            'ActJobStat' => substr($jobinfo, 36, 4),
-            'JobType' => substr($jobinfo, 40, 1),
+            'JobName'        => substr($jobinfo, 0, 10),
+            'JobUser'        => substr($jobinfo, 10, 10),
+            'JobNumber'      => substr($jobinfo, 20, 6),
+            'JobStatus'      => substr($jobinfo, 26, 10),
+            'ActJobStat'     => substr($jobinfo, 36, 4),
+            'JobType'        => substr($jobinfo, 40, 1),
             'JobRunPriority' => substr($jobinfo, 41, 5),
-            'JobTimeSlice' => substr($jobinfo, 46, 5),
-            'PoolId' => substr($jobinfo, 51, 5),
-            'Functionname' => substr($jobinfo, 56, 10),
+            'JobTimeSlice'   => substr($jobinfo, 46, 5),
+            'PoolId'         => substr($jobinfo, 51, 5),
+            'Functionname'   => substr($jobinfo, 56, 10),
         ];
     }
 }

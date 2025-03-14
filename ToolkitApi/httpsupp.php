@@ -69,13 +69,13 @@ class httpsupp
         $clobOut = $outSize;
         $postdata = http_build_query(
                 [
-                        'db2' => $this->getDb(),
-                        'uid' => $this->getUser(),
-                        'pwd' => $this->getPw(),
-                        'ipc' => $this->getIpc(),
-                        'ctl' => $this->getCtl(),
-                        'xmlin' => $clobIn,
-                        'xmlout' => $clobOut,    // size expected XML output
+                    'db2'    => $this->getDb(),
+                    'uid'    => $this->getUser(),
+                    'pwd'    => $this->getPw(),
+                    'ipc'    => $this->getIpc(),
+                    'ctl'    => $this->getCtl(),
+                    'xmlin'  => $clobIn,
+                    'xmlout' => $clobOut,    // size expected XML output
                 ]
         );
 
@@ -93,13 +93,13 @@ class httpsupp
             //secure connection.
             //Explanation of Options: http://phpsecurity.readthedocs.org/en/latest/Transport-Layer-Security-%28HTTPS-SSL-and-TLS%29.html
             $opts['ssl'] = [
-                'verify_peer' => true, //Require verification of SSL certificate used.
-                'cafile' => $this->getSSLCAFile(),  //__DIR__ . '/cacert.pem'  //Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. PEM or CRT file. You can use this file: http://curl.haxx.se/ca/cacert.pem
-                'verify_depth' => 5, // Abort if the certificate chain is too deep.
-                'CN_match' => $this->getServerName(), //EX: secure.example.com
+                'verify_peer'         => true, //Require verification of SSL certificate used.
+                'cafile'              => $this->getSSLCAFile(),  //__DIR__ . '/cacert.pem'  //Location of Certificate Authority file on local filesystem which should be used with the verify_peer context option to authenticate the identity of the remote peer. PEM or CRT file. You can use this file: http://curl.haxx.se/ca/cacert.pem
+                'verify_depth'        => 5, // Abort if the certificate chain is too deep.
+                'CN_match'            => $this->getServerName(), //EX: secure.example.com
                 'disable_compression' => true,
-                'SNI_enabled' => true,
-                'ciphers' => 'ALL!EXPORT!EXPORT40!EXPORT56!aNULL!LOW!RC4', ];
+                'SNI_enabled'         => true,
+                'ciphers'             => 'ALL!EXPORT!EXPORT40!EXPORT56!aNULL!LOW!RC4', ];
         }
 
         $context = stream_context_create($opts);

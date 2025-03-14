@@ -27,7 +27,8 @@ class DataDescription
     public $_miscAttributes = []; // user-defined
 
     // array of simple types, old to new toolkit, with sprintf-style percent formatting.
-    protected $_typeMap = [I5_TYPE_CHAR => '%sa',
+    protected $_typeMap = [
+        I5_TYPE_CHAR   => '%sa',
         I5_TYPE_PACKED => '%sp%s',
         // 4 byte float
         I5_TYPE_FLOAT => '4f',
@@ -36,7 +37,7 @@ class DataDescription
         // int16, 2 bytes
         I5_TYPE_SHORT => '5i0',
         // int32, 4 bytes
-        I5_TYPE_INT => '10i0',
+        I5_TYPE_INT   => '10i0',
         I5_TYPE_ZONED => '%ss%s',
         // TODO not sure if byte really maps to binary. No one knows what BYTE really does
         I5_TYPE_BYTE => '%sb',
@@ -44,7 +45,8 @@ class DataDescription
         'hole' => '%sh',
     ];
 
-    protected $_inoutMap = [I5_IN => 'in',
+    protected $_inoutMap = [
+        I5_IN  => 'in',
         I5_OUT => 'out',
         // INOUT is the same as I5_IN||I5_OUT
         I5_INOUT => 'both',

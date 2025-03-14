@@ -52,22 +52,22 @@ final class ProgramParameterTest extends TestCase
     {
         $data1 = $this->programParameter->getParamProperities();
         $data2 = [
-            'type' => $this->type,
-            'io' => $this->io,
-            'comment' => $this->comment,
-            'var' => $this->var,
-            'data' => $this->data,
-            'varying' => $this->varying,
-            'dim' => $this->dim,
-            'by' => $this->by,
-            'array' => false,
-            'setlen' => null,
-            'len' => null,
-            'dou' => '',
-            'enddo' => '',
+            'type'        => $this->type,
+            'io'          => $this->io,
+            'comment'     => $this->comment,
+            'var'         => $this->var,
+            'data'        => $this->data,
+            'varying'     => $this->varying,
+            'dim'         => $this->dim,
+            'by'          => $this->by,
+            'array'       => false,
+            'setlen'      => null,
+            'len'         => null,
+            'dou'         => '',
+            'enddo'       => '',
             'ccsidBefore' => '',
-            'ccsidAfter' => '',
-            'useHex' => false,
+            'ccsidAfter'  => '',
+            'useHex'      => false,
         ];
 
         $this->assertEquals($data1, $data2);
