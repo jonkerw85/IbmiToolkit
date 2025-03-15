@@ -60,9 +60,9 @@ class ToolkitPcml
     /**
      * Constructor takes a PCML string and converts to an array-based new toolkit parameter array.
      *
-     * @param string         $pcml               The string of PCML
+     * @param string          $pcml               The string of PCML
      * @param \ToolkitService $connection         connection object for toolkit
-     * @param array          $countersAndCounted
+     * @param array           $countersAndCounted
      *
      * @throws \Exception
      */

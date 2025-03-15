@@ -13,9 +13,9 @@ class DataArea
     private $ErrMessage;
 
     /**
-     * @param ToolkitInterface $ToolkitSrvObj
+     * @param ToolkitInterface|null $ToolkitSrvObj
      */
-    public function __construct(ToolkitInterface $ToolkitSrvObj = null)
+    public function __construct(?ToolkitInterface $ToolkitSrvObj = null)
     {
         if ($ToolkitSrvObj instanceof Toolkit) {
             $this->ToolkitSrvObj = $ToolkitSrvObj;

@@ -15,10 +15,10 @@ class SpooledFiles
     private $ErrMessage;
 
     /**
-     * @param ToolkitInterface $ToolkitSrvObj
-     * @param null             $UserLib
+     * @param ToolkitInterface|null $ToolkitSrvObj
+     * @param null                  $UserLib
      */
-    public function __construct(ToolkitInterface $ToolkitSrvObj = null, $UserLib = null)
+    public function __construct(?ToolkitInterface $ToolkitSrvObj = null, $UserLib = null)
     {
         if ($ToolkitSrvObj instanceof Toolkit) {
             $this->ToolkitSrvObj = $ToolkitSrvObj;
@@ -184,7 +184,7 @@ class SpooledFiles
 
         try {
             $Txt = $this->ToolkitSrvObj->executeQuery($stmt);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('ReadSPLFData() error:' . $e->getMessage());
         }
 

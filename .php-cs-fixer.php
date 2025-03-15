@@ -10,7 +10,8 @@ return (new PhpCsFixer\Config())
         'yoda_style' => false, // Prevent Yoda conditions
         'concat_space' => ['spacing' => 'one'], // Adds a space around concatenation
         'binary_operator_spaces' => ['operators' => ['=>' => 'align']],
-        'array_indentation' => true
+        'array_indentation' => true,
+        'no_superfluous_phpdoc_tags' => false
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(false) // Prevent risky modifications for now

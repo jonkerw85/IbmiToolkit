@@ -12,7 +12,7 @@ class UserSpace
     protected $ErrMessage;
 
     /**
-     * @param ToolkitInterface $ToolkitSrvObj
+     * @param ToolkitInterface|null $ToolkitSrvObj
      */
     public function __construct(?ToolkitInterface $ToolkitSrvObj = null)
     {

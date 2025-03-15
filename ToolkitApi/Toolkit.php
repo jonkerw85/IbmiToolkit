@@ -26,6 +26,15 @@ class Toolkit implements ToolkitInterface
     protected $XMLWrapper = null;
     protected $conn = null; // connection to database or other transport
 
+    /**
+     * Stores the raw XML response for further processing or debugging.
+     *
+     * @todo Implement functionality to populate this property with XML output.
+     *
+     * @var string|null XML content as a string, or null if not yet set
+     */
+    protected $outputXml = null;
+
     // @todo create methods to set (separately and all at once) and get errors, akin to what was done for DB module.
     // Test ability to retrieve program errors and text.
     protected $error = ''; // ambiguous usage (it's here for backward compat.) but mainly 7-char error code
@@ -2069,12 +2078,11 @@ class Toolkit implements ToolkitInterface
      *
      * @todo make outputXml a property that is used so this method can work.
      *
-     * @return mixed
+     * @return string|null
      */
     public function getXmlOut()
     {
-        throw new \Exception('Not implemented.');
-        //return $this->outputXml;
+        return $this->outputXml;
     }
 
     /**
