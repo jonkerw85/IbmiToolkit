@@ -621,7 +621,7 @@ class DataDescription
                         // by the value of a "count" field defined in the RPG/COBOL.
                         // Set a label to identify the count field. The same label will be attached
                         // to the count field to match them up.
-                        if (isset($nameContainingCount) && $nameContainingCount) {
+                        if ($nameContainingCount) {
                             $newStyleItem->setParamProperties(['dou' => $nameContainingCount]);
                         } //(if ($nameContainingCount))
                     }

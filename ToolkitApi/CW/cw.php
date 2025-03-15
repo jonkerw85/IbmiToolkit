@@ -629,13 +629,13 @@ function i5_pclose(ToolkitServiceCw &$connection)
 /**
  * Changes authority of the connection to a specific user. All actions will be executed as this user from now on.
  *
- * @param string           $user
- * @param string           $password
- * @param ToolkitServiceCw $connection [optional] the result of i5_connect(), or omit
+ * @param string                $user
+ * @param string                $password
+ * @param ToolkitServiceCw|null $connection [optional] the result of i5_connect(), or omit
  *
  * @return bool True on success, False on failure
  */
-function i5_adopt_authority($user, $password, ToolkitServiceCw $connection = null)
+function i5_adopt_authority($user, $password, ?ToolkitServiceCw $connection = null)
 {
     // if conn not passed in, get instance of toolkit. If can't be obtained, return false.
     if (!$connection = verifyConnection($connection)) {
@@ -812,24 +812,24 @@ function i5_errormsg()
  * i5_command: Call a command with optional input/output parameters
  *             Can also call a program that has no parameters.
  *
- * @param string           $cmdString  Basic command that can contain parameters or not, as desired
- * @param array            $input      Optional array of name => value pairs
- *                                     The name describes the call input parameters. Names should match IBM i CL command parameter names.
- *                                     If the array is empty or not provided, no input parameters are given.
- *                                     Strings are not quoted; this is the user's responsibility.
- *                                     If the value is an array, the list of contained values is passed in a space-delimited string.
- * @param array            $output     Optional information about how to get output from the command.
- *                                     if value is a string, it's the name of PHP variable to receive the value.
- *                                     example:  array('userlibl'=>'usrlibl')
- *                                     if value is an array, it's in the form: array($varName, 'type')
- *                                     examples: array('syslibl' => array('syslibl', 'char(165)'))
- *                                     array('ccsid'   => array('myccsid', 'dec(5 0)'))
- *                                     Note: the old toolkit seemed to use the lengths (165), (5 0) but we will ignore lengths. "dec" is used, if present.
- * @param ToolkitServiceCw $connection Optional connection object
+ * @param string                $cmdString  Basic command that can contain parameters or not, as desired
+ * @param array                 $input      Optional array of name => value pairs
+ *                                          The name describes the call input parameters. Names should match IBM i CL command parameter names.
+ *                                          If the array is empty or not provided, no input parameters are given.
+ *                                          Strings are not quoted; this is the user's responsibility.
+ *                                          If the value is an array, the list of contained values is passed in a space-delimited string.
+ * @param array                 $output     Optional information about how to get output from the command.
+ *                                          if value is a string, it's the name of PHP variable to receive the value.
+ *                                          example:  array('userlibl'=>'usrlibl')
+ *                                          if value is an array, it's in the form: array($varName, 'type')
+ *                                          examples: array('syslibl' => array('syslibl', 'char(165)'))
+ *                                          array('ccsid'   => array('myccsid', 'dec(5 0)'))
+ *                                          Note: the old toolkit seemed to use the lengths (165), (5 0) but we will ignore lengths. "dec" is used, if present.
+ * @param ToolkitServiceCw|null $connection Optional connection object
  *
  * @return bool for success/failure
  */
-function i5_command($cmdString, $input = [], $output = [], ToolkitServiceCw $connection = null)
+function i5_command($cmdString, $input = [], $output = [], ?ToolkitServiceCw $connection = null)
 {
     // if conn not passed in, get instance of toolkit. If can't be obtained, return false.
     if (!$connection = verifyConnection($connection)) {
