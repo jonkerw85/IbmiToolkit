@@ -1309,9 +1309,9 @@ function i5_jobLog_list($elements = [], $connection = null)
     // In other words,
     // (Not documented but shown in old toolkit unit tests.)
     $specifyJobParams = false;
-    if (!empty($jobName) || !empty($jobNumber)) {
+    if (!empty($jobName) || !empty($jobNumber)) { // @phpstan-ignore empty.variable, empty.variable
         // jobName or jobNumber is specified. Must have all three job params.
-        if (empty($jobName) || empty($jobNumber) || empty($jobUser)) {
+        if (empty($jobName) || empty($jobNumber) || empty($jobUser)) {// @phpstan-ignore empty.variable, empty.variable, empty.variable
             i5ErrorActivity(I5_ERR_PHP_LIST_PROP, I5_CAT_PHP, 'Incomplete job criteria specified.', 'If jobname or jobnumber are specified, then all three job criteria (jobname, jobnumber, and username) must be specified. You can use * to indicate current job.');
 
             return false;

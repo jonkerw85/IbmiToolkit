@@ -4,6 +4,8 @@ namespace ToolkitApi;
 
 /**
  * Class DataQueue.
+ *
+ * Manages interaction with IBM i Data Queue (DTAQ) services via the Toolkit interface.
  */
 class DataQueue
 {
@@ -14,7 +16,10 @@ class DataQueue
     private $ErrMessage = null;
 
     /**
-     * @param ToolkitInterface|null $ToolkitSrvObj
+     * Initializes the DataQueue object with an optional Toolkit service object.
+     * If no object is provided, the Toolkit property will remain uninitialized.
+     *
+     * @param ToolkitInterface|null $ToolkitSrvObj an instance of the Toolkit service, or null
      */
     public function __construct(?ToolkitInterface $ToolkitSrvObj = null)
     {
@@ -28,7 +33,11 @@ class DataQueue
     }
 
     /**
-     * @return string|null
+     * Retrieves the error message, if any.
+     *
+     * This method returns the current error message stored in the ErrMessage property. If no error has occurred, it returns null.
+     *
+     * @return string|null the error message, or null if no error has occurred
      */
     public function getError()
     {
@@ -36,6 +45,12 @@ class DataQueue
     }
 
     /**
+     * Sets the error message.
+     *
+     * This method sets the ErrMessage property to the provided error string. This is typically used to store the error message when an operation fails.
+     *
+     * @param string $error the error message to set
+     *
      * @return void
      */
     public function setError(string $error)
@@ -44,18 +59,20 @@ class DataQueue
     }
 
     /**
-     * @param $DataQName
-     * @param $DataQLib
-     * @param int    $MaxLength
-     * @param string $Sequence
-     * @param int    $KeyLength
-     * @param string $Authority
-     * @param int    $QSizeMaxNumEntries
-     * @param int    $QSizeInitNumEntries
+     * Create a new data queue in the specified library.
      *
-     * @return bool
+     * @param string $DataQName           name of the data queue to be created
+     * @param string $DataQLib            library where the data queue will be created
+     * @param int    $MaxLength           Maximum length of data in the queue. Default is 128.
+     * @param string $Sequence            Sequence type for the queue (*FIFO, *LIFO, *KEYED). Default is *FIFO.
+     * @param int    $KeyLength           Key length for *KEYED queues. Default is 0.
+     * @param string $Authority           Authority for the queue. Default is *LIBCRTAUT.
+     * @param int    $QSizeMaxNumEntries  Maximum number of entries in the queue. Default is 32999.
+     * @param int    $QSizeInitNumEntries Initial number of entries in the queue. Default is 16.
      *
-     * @throws \Exception
+     * @return bool returns true if the data queue is successfully created
+     *
+     * @throws \Exception throws an exception if the data queue creation fails
      */
     public function CreateDataQ($DataQName, $DataQLib,
                                 $MaxLength = 128,
@@ -71,7 +88,9 @@ class DataQueue
             strcmp(strtoupper($Sequence), '*LIFO') == 0) {
             $DataQType = $Sequence;
         } else {
-            return $this->setError('Invalid Data Queue type parameter');
+            $this->setError('Invalid Data Queue type parameter');
+
+            return false;
         }
 
         $KeyedSetting = '';
@@ -95,6 +114,10 @@ class DataQueue
             $InitEntryies = $QSizeInitNumEntries;
         }
 
+        if (!isset($MaxQSize) || !isset($InitEntryies)) {
+            throw new \Exception('Could not generate additional settings because MaxQSize and/or InitEntryies are not set or are invalid.');
+        }
+
         $AdditionalSetting = sprintf("$KeyedSetting SENDERID(*YES) SIZE(%s %d)", $MaxQSize, $InitEntryies);
 
         ($MaxLength > 64512) ? $MaxLen = 64512 : $MaxLen = $MaxLength;
@@ -112,12 +135,17 @@ class DataQueue
     }
 
     /**
-     * @param string $DataQName
-     * @param string $DataQLib
+     * Deletes a specified Data Queue (DTAQ) from the IBM i system.
      *
-     * @return bool
+     * Uses the DLTDTAQ command to delete the Data Queue. If no queue name or library is provided,
+     * it will use the object's current DataQueueName and DataQueueLib.
      *
-     * @throws \Exception
+     * @param string $DataQName The name of the Data Queue to delete. Defaults to the object's DataQueueName.
+     * @param string $DataQLib  The library where the Data Queue resides. Defaults to the object's DataQueueLib.
+     *
+     * @return bool true on success
+     *
+     * @throws \Exception if the command fails, an exception with the error message will be thrown
      */
     public function DeleteDQ($DataQName = '', $DataQLib = '')
     {
@@ -134,15 +162,17 @@ class DataQueue
     }
 
     /**
-     * Correct spelling with this alias.
+     * Correctly calls the misspelled receieveDataQueue method.
      *
-     * @param $WaitTime
-     * @param string $KeyOrder
-     * @param int    $KeyLength
-     * @param string $KeyData
-     * @param string $WithRemoveMsg
+     * This method provides an alias for receieveDataQueue, ensuring backwards compatibility.
      *
-     * @return bool
+     * @param int    $WaitTime      The amount of time (in seconds) to wait for data. A negative value waits indefinitely.
+     * @param string $KeyOrder      the order of the key data, defaults to empty
+     * @param int    $KeyLength     the length of the key data, defaults to 0
+     * @param string $KeyData       the key data to search for, defaults to an empty string
+     * @param string $WithRemoveMsg Flag to indicate whether the message should be removed after retrieval. Defaults to 'N' (No).
+     *
+     * @return bool returns the result of the call to receieveDataQueue
      */
     public function receiveDataQueue($WaitTime, $KeyOrder = '', $KeyLength = 0, $KeyData = '', $WithRemoveMsg = 'N')
     {
@@ -151,13 +181,20 @@ class DataQueue
     }
 
     /**
-     * @param $WaitTime
-     * @param string $KeyOrder
-     * @param int    $KeyLength
-     * @param string $KeyData
-     * @param string $WithRemoveMsg
+     * Receives data from the specified Data Queue (DTAQ) using the QRCVDTAQ API.
      *
-     * @return bool
+     * This method interacts with the IBM i system's QRCVDTAQ API to receive data from a Data Queue.
+     * It allows for waiting a specified time and provides options for key-based filtering and removing messages.
+     *
+     * @param int    $WaitTime      The amount of time (in seconds) to wait for data. A negative value waits indefinitely.
+     * @param string $KeyOrder      The order of the key data (e.g., EQ), defaults to empty.
+     * @param int    $KeyLength     the length of the key data, defaults to 0
+     * @param string $KeyData       the key data to search for, defaults to an empty string
+     * @param string $WithRemoveMsg Flag to indicate whether the message should be removed after retrieval. Defaults to 'N' (No).
+     *
+     * @return bool|array returns false if no data is found, or an array containing the data from the queue on success
+     *
+     * @throws \Exception if an error occurs while receiving the data
      */
     public function receieveDataQueue($WaitTime, $KeyOrder = '', $KeyLength = 0, $KeyData = '', $WithRemoveMsg = 'N')
     {
@@ -222,8 +259,14 @@ class DataQueue
     }
 
     /**
-     * @param $DataQName
-     * @param $DataQLib
+     * Sets the Data Queue name and library.
+     *
+     * This method allows you to set the name and library for the Data Queue. These values are used in subsequent methods that interact with the Data Queue.
+     *
+     * @param string $DataQName the name of the Data Queue
+     * @param string $DataQLib  the library containing the Data Queue
+     *
+     * @return void
      */
     public function SetDataQName($DataQName, $DataQLib)
     {
@@ -232,12 +275,18 @@ class DataQueue
     }
 
     /**
-     * @param $DataLen
-     * @param $Data
-     * @param int    $KeyLength
-     * @param string $KeyData
+     * Sends data to the specified Data Queue using the QSNDDTAQ API.
      *
-     * @return array|bool
+     * This method sends data to the Data Queue, with optional key-based filtering. If a key length is provided, it will include key data in the request.
+     *
+     * @param int    $DataLen   the length of the data to send
+     * @param string $Data      the data to send to the Data Queue
+     * @param int    $KeyLength the length of the key data (optional, defaults to 0)
+     * @param string $KeyData   the key data used for key-based filtering (optional, defaults to empty string)
+     *
+     * @return array|bool returns the response array on success or false on failure
+     *
+     * @throws \Exception if an error occurs during the API call
      */
     public function SendDataQueue($DataLen, $Data, $KeyLength = 0, $KeyData = '')
     {
@@ -260,11 +309,17 @@ class DataQueue
     }
 
     /**
-     * @param string $KeyOrder
-     * @param int    $KeyLength
-     * @param string $KeyData
+     * Clears the Data Queue using the QCLRDTAQ API, optionally specifying key-based filtering.
      *
-     * @return bool
+     * This method clears all messages from the Data Queue. If key data is provided, it clears messages matching the specified key.
+     *
+     * @param string $KeyOrder  the order of the key data (optional, defaults to empty string)
+     * @param int    $KeyLength the length of the key data (optional, defaults to 0)
+     * @param string $KeyData   the key data to match for filtering (optional, defaults to empty string)
+     *
+     * @return bool returns true on success or false if the operation fails
+     *
+     * @throws \Exception if an error occurs during the API call
      */
     public function ClearDQ($KeyOrder = '', $KeyLength = 0, $KeyData = '')
     {
