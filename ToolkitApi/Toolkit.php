@@ -1328,9 +1328,14 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $command
+     * Executes a CL command interactively using the PASE (Portable Application Solutions Environment) environment.
      *
-     * @return array|bool
+     * This method sends a command through the PASE environment and returns the output as an array or false if an error occurs.
+     * PASE provides a Unix-like environment for IBM i, and this method allows interaction with it using CL commands.
+     *
+     * @param string $command the CL command to execute interactively within the PASE environment
+     *
+     * @return array|bool an array containing the command output on success, or false on failure
      */
     public function CLInteractiveCommand($command)
     {
@@ -1338,9 +1343,14 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $command
+     * Executes a CL command using PASE command execution.
      *
-     * @return array|bool
+     * This method sends a command to the PASE command interpreter and processes the output.
+     * It's slightly different from interactive mode as it handles command execution in a background-like mode.
+     *
+     * @param string $command the CL command to execute using PASE command execution
+     *
+     * @return array|bool an array containing the command output on success, or false on failure
      */
     public function paseCommand($command)
     {
@@ -1348,9 +1358,20 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $command
+     * Executes a command through the QSH interpreter and interprets the result.
      *
-     * @return bool
+     * This method sends a command through the QSH (Qshell) interpreter on the IBM i system,
+     * processes the output, and checks for any errors. It handles different exit status codes
+     * and logs relevant error information if needed.
+     *
+     * Known status codes:
+     * - QSH0005: Command ended normally. Check the exit status (0 for success, non-zero for failure).
+     * - QSH0006: Command ended by signal number.
+     * - QSH0007: Command ended by exception.
+     *
+     * @param string $command The command to execute in the QSH interpreter. It can be any valid QSH command.
+     *
+     * @return bool True on success, False on failure. If failed, CPF error code will be available in $this->cpfErr.
      */
     public function qshellCommand($command)
     {
@@ -1449,14 +1470,18 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * new. uses REXX to return output params and CPF codes
-     * Slower than 'cmd' or 'system'.
+     * Executes a CL command using REXX to return output parameters and CPF codes.
      *
-     * Sample format of command: 'RTVJOBA JOB(?) USER(?) NBR(?) CURUSER(?) SYSLIBL(?) CURLIB(?) USRLIBL(?) LANGID(?) CNTRYID(?) CCSID(?N) DFTCCSID(?N)'
+     * This method uses REXX to execute the CL command and retrieves the output parameters
+     * along with any CPF error codes. It is slower than using 'cmd' or 'system', but may
+     * be necessary for certain tasks that require REXX processing.
      *
-     * @param $command
+     * Example command format:
+     * 'RTVJOBA JOB(?) USER(?) NBR(?) CURUSER(?) SYSLIBL(?) CURLIB(?) USRLIBL(?) LANGID(?) CNTRYID(?) CCSID(?N) DFTCCSID(?N)'
      *
-     * @return array|bool
+     * @param string|array $command The CL command(s) to execute. Can be a string or an array of commands.
+     *
+     * @return array|bool returns an array on success or false on failure
      */
     public function ClCommandWithOutput($command)
     {
@@ -1464,13 +1489,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * new. uses 'system' to return CPF codes
-     * slightly slower than regular cmd but faster than rexx
-     * (Actually it's faster than cmd in recent tests. It depends, perhaps.).
+     * Executes a CL command and returns CPF codes using the 'system' method.
      *
-     * @param string $command can be a string or an array
+     * This method executes a CL command and retrieves CPF error codes. It is slightly
+     * slower than the regular command but generally faster than using REXX. In recent
+     * tests, it has been found to be faster than using the standard command, but performance
+     * may vary depending on the context.
      *
-     * @return array|bool
+     * @param string|array $command The CL command to be executed. It can be either a string or an array of commands.
+     *
+     * @return array|bool returns an array on success or false on failure
      */
     public function ClCommandWithCpf($command)
     {
@@ -1805,11 +1833,11 @@ class Toolkit implements ToolkitInterface
 
     /**
      * Adds an array of parameters by processing each element in the provided array and returning an array of parameter objects.
-     * This method constructs parameters using the `AddParameter` method based on the provided data.
+     * This method constructs parameters using the AddParameter method based on the provided data.
      *
      * @param array $array an array of associative arrays, each containing data for a parameter (type, io, comment, var, data, varying, dim)
      *
-     * @return array an array of parameter objects created by the `AddParameter` method
+     * @return array an array of parameter objects created by the AddParameter method
      */
     public static function AddParameterArray($array)
     {
@@ -1887,9 +1915,16 @@ class Toolkit implements ToolkitInterface
     // Anyway, the QSNDDTAQ API doesn't have an error struct, so this way we can be consistent---get all errors in joblog.
 
     /**
-     * @param int $paramNum
+     * Generates XML for an error data structure without an error code.
      *
-     * @return string
+     * This method constructs an XML parameter for IBM i APIs that returns an error
+     * data structure. It includes a field for the size of the structure, where setting
+     * it to 0 forces errors to bubble up to the job log instead of being included in
+     * the API response. The parameter number is included for the comment if provided.
+     *
+     * @param int $paramNum The parameter number used in the XML structure. Default is 0.
+     *
+     * @return string the generated XML string defining the error data structure
      */
     public static function getErrorDataStructXml($paramNum = 0)
     {
@@ -1903,13 +1938,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * This version will provide the error code in output rather than forcing errors to bubble up to joblog.
-     * Since XMLSERVICE is slow at getting job log, it's faster to get the code in the API DS if available.
-     * Pass in $paramNum to get a numeric parameter number for the comment.
+     * Generates XML for an error data structure with an error code.
      *
-     * @param int $paramNum
+     * This method constructs an XML parameter for IBM i APIs that returns
+     * error details within a data structure, instead of relying on job log
+     * retrieval. This improves performance by avoiding XMLSERVICE job log parsing.
+     * The structure includes available error bytes, CPF error code, and reserved space.
      *
-     * @return string
+     * @param int $paramNum The parameter number used in the XML structure. Default is 0.
+     *
+     * @return string the generated XML string defining the error code data structure
      */
     public static function getErrorDataStructXmlWithCode($paramNum = 0)
     {
@@ -1926,11 +1964,15 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * this DS is common to many IBM i APIs.
+     * Generates XML for retrieving list information in IBM i API calls.
      *
-     * @param int $paramNum
+     * This method constructs XML parameters for list-related APIs, defining
+     * details such as total records, request handle, record length, list status,
+     * and creation timestamp. This structure is common to many IBM i list APIs.
      *
-     * @return string
+     * @param int $paramNum The parameter number used in the XML structure. Default is 0.
+     *
+     * @return string the generated XML string defining list information parameters
      */
     public static function getListInfoApiXml($paramNum = 0)
     {
@@ -1954,11 +1996,15 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * this DS is common to many IBM i APIs.
+     * Generates XML for specifying the number of records to return in IBM i API calls.
      *
-     * @param int $paramNum
+     * This method constructs XML parameters to define the number of records
+     * requested. A value of zero indicates that record retrieval will be handled
+     * by the Get List Entries API.
      *
-     * @return string
+     * @param int $paramNum The parameter number used in the XML structure. Default is 0.
+     *
+     * @return string the generated XML string defining the number of records to return
      */
     public static function getNumberOfRecordsDesiredApiXml($paramNum = 0)
     {
@@ -1970,11 +2016,14 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * this DS is common to many IBM i APIs.
+     * Generates XML for sort information in IBM i API calls.
      *
-     * @param int $paramNum
+     * This method constructs XML parameters to define sort information,
+     * which is commonly used in IBM i API calls. By default, no sorting is applied.
      *
-     * @return string
+     * @param int $paramNum The parameter number used in the XML structure. Default is 0.
+     *
+     * @return string the generated XML string for sort information
      */
     public static function getSortInformationApiXml($paramNum = 0)
     {
@@ -1989,12 +2038,15 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * this DS is common to many IBM i APIs.
+     * Generates XML for a dummy receiver and its length for IBM i APIs.
      *
-     * @param int $paramNum
-     * @param $lengthOfReceiverVariable
+     * This method constructs XML parameters commonly used in IBM i API calls.
+     * It includes a dummy receiver and its corresponding length parameter.
      *
-     * @return string
+     * @param int $paramNum                 the parameter number used in the XML structure
+     * @param int $lengthOfReceiverVariable the length of the receiver variable
+     *
+     * @return string the generated XML string
      */
     public static function getDummyReceiverAndLengthApiXml($paramNum, $lengthOfReceiverVariable)
     {
@@ -2049,7 +2101,13 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $internalKey
+     * Sets the internal key option.
+     *
+     * This method updates the internal key value in the options array.
+     *
+     * @param mixed $internalKey the internal key to be set
+     *
+     * @return void
      */
     public function setInternalKey($internalKey)
     {
@@ -2057,11 +2115,15 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * construct a string of space-delimited control keys based on properties of this class.
+     * Constructs a space-delimited string of control keys based on the properties of this class.
      *
-     * @param bool $disconnect
+     * This method determines and assembles the necessary XMLSERVICE control keys
+     * based on various configuration options, including idle timeouts, stateless calls,
+     * tracing, debugging, licensing, and performance monitoring.
      *
-     * @return string
+     * @param bool $disconnect if true, returns the immediate disconnect key (*immed)
+     *
+     * @return string the constructed control key string
      */
     protected function getControlKey($disconnect = false)
     {
@@ -2280,10 +2342,19 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $retPgmArr
-     * @param $functionErrMsg
+     * Verifies if a CPF (Control Program Facility) error occurred.
      *
-     * @return bool
+     * This method checks the response array for an error data structure and determines
+     * whether an error was returned. If an error is detected, it sets the CPF error code
+     * and message accordingly.
+     *
+     * @todo In the future, retrieve the actual error text from the job log.
+     *
+     * @param array|string|null $retPgmArr      The response array from a program call.
+     *                                          If not an array, an error is assumed.
+     * @param string            $functionErrMsg an error message (currently obsolete)
+     *
+     * @return bool returns true if an error is detected, false otherwise
      */
     public function verify_CPFError($retPgmArr, $functionErrMsg)
     {
@@ -2321,11 +2392,17 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * err_bytes_avail is the official, reliable way to check for an error.
+     * Parses the error parameter to check for errors.
      *
-     * @todo should this be using $this->cpfErr
+     * This method examines an error structure to determine if an error occurred.
+     * The presence of an error is identified using the exceptId field and a non-zero
+     * err_bytes_avail value.
      *
-     * @return bool
+     * @todo Should this be using $this->cpfErr instead?
+     *
+     * @param array $Error the error structure returned from a function or API call
+     *
+     * @return string|false returns the error code (exceptId) if an error is found, or false if no error is detected
      */
     public function ParseErrorParameter(array $Error)
     {
@@ -2356,11 +2433,17 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $stmt
+     * Executes a database query and handles errors.
      *
-     * @return mixed
+     * This method runs the given SQL statement using the database connection.
+     * If the query execution fails, it retrieves the error code and message from the database
+     * and throws an exception.
      *
-     * @throws \Exception
+     * @param string $stmt the SQL query to execute
+     *
+     * @throws \Exception if the query execution fails, an exception is thrown with the error message and code
+     *
+     * @return array the result set as an array if the query is successful
      */
     public function executeQuery($stmt)
     {
@@ -2444,21 +2527,23 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * given $this->joblog, and an array of program names that might have caused errors,
-     * extract the error code (CPF or similar) and message text from the joblog.
+     * Extracts error code (e.g., CPF, CPC) and message text from the job log based on an array of program names.
+     * This method scans through the job log to identify the error code and message related to specific programs.
      *
-     * Include '< lveContext' because it may appear in the program spot if library does not exist.
-     * '#mnrnrl' if program does not exist.
-     * 'QRNXIE' for non-numeric data passed in numeric field.
-     * '< allProgram' for when wrong number of params are passed.
+     * It looks for various pseudo-program names that may appear in the log under different circumstances:
+     * - '< lveContext' when the library does not exist for the program.
+     * - '#mnrnrl' when the program does not exist.
+     * - 'QRNXIE' when non-numeric data is passed to a numeric field.
+     * - '< allProgram' when an incorrect number of parameters are passed to a program.
      *
-     * @todo instead of all these pseudo-program names, take last error from XMLSERVICE parsing, if program name itself not found.
+     * If an error cannot be found in the job log, the method will use a default 'UNEXPECTED' error code and retrieve the text from $this->XMLWrapper->getLastError().
+     * The extracted error code is placed in $this->cpfErr, and the error text is stored in $this->error.
      *
-     * If can't find error in joblog, uses UNEXPECTED and text from $this->XMLWrapper->getLastError();
+     * @todo Instead of checking for all these pseudo-program names, consider extracting the last error from XMLSERVICE parsing if no program name is found.
      *
-     * Code is placed in $this->cpfErr. Text goes to $this->error.
+     * @param array $programsToLookFor list of program names to search for in the job log
      *
-     * @return bool True on success, False on failure
+     * @return bool true if an error is successfully extracted, False if no error is found
      */
     protected function extractErrorFromJoblog(array $programsToLookFor)
     {
@@ -2570,7 +2655,7 @@ class Toolkit implements ToolkitInterface
      * Changes the current user of the job to a specific user, meaning all actions will be executed as this user from now on.
      * This method is also known as "swap user" or the misnomer "adopt authority".
      *
-     * It takes the provided user and password, validates them using the `QSYGETPH` API to get the profile handle, then sets the user profile via the `QWTSETP` API, and finally releases the handle with the `QSYRLSPH` API.
+     * It takes the provided user and password, validates them using the QSYGETPH API to get the profile handle, then sets the user profile via the QWTSETP API, and finally releases the handle with the QSYRLSPH API.
      *
      * @param string $user     The user profile name. Generally should be in uppercase.
      * @param string $password the password for the specified user
@@ -2669,7 +2754,7 @@ class Toolkit implements ToolkitInterface
 
     /**
      * Retrieves a configuration value from the toolkit config file, or returns a default value if the key is not found.
-     * If no default value is provided and the key is not found, it returns `false`.
+     * If no default value is provided and the key is not found, it returns false.
      * This method is static to allow it to retain its value across multiple calls within a request.
      *
      * @todo Store the config in Zend Data Cache to avoid reading the file on each request.
@@ -2677,9 +2762,9 @@ class Toolkit implements ToolkitInterface
      *
      * @param string     $heading the section of the configuration file (INI format)
      * @param string     $key     the specific key within the given section of the configuration file
-     * @param mixed|null $default Optional default value to return if the key is not found. Defaults to `null`.
+     * @param mixed|null $default Optional default value to return if the key is not found. Defaults to null.
      *
-     * @return mixed the configuration value corresponding to the key, or the default value, or `false` if not found
+     * @return mixed the configuration value corresponding to the key, or the default value, or false if not found
      */
     public static function getConfigValue($heading, $key, $default = null)
     {
