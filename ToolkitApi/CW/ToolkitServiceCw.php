@@ -142,7 +142,7 @@ class ToolkitServiceCw extends Toolkit
     public function getCPFErr()
     {
         // TODO get from Verify_CPFError or the other one
-        return $this->CPFErr;
+        return $this->cpfErr;
     }
 
     /**

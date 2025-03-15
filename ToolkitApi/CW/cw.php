@@ -363,7 +363,7 @@ function i5_connect($host = '', $user = '', $password = '', $options = [])
 
         // if getInstance() returned false (unlikely)
         if (!$tkit) {
-            setError(I5_ERR_NOTCONNECTED, I5_CAT_PHP, 'Cannot get a connection', 'Cannot get a connection');
+            i5ErrorActivity(I5_ERR_NOTCONNECTED, I5_CAT_PHP, 'Cannot get a connection', 'Cannot get a connection');
         }
     } catch (Exception $e) {
         // If user or password is wrong, give errNum I5_ERR_WRONGLOGIN with category I5_CAT_PHP.
@@ -1520,11 +1520,11 @@ function i5_jobLog_list_close(&$list = null)
  * Check that we have an instance of the toolkit object, either passed in or available from the toolkit.
  * Return that instance, or false.
  *
- * @param ToolkitServiceCw $connection
+ * @param ToolkitServiceCw|null $connection
  *
  * @return bool|null
  */
-function verifyConnection(ToolkitServiceCw $connection = null)
+function verifyConnection(?ToolkitServiceCw $connection = null)
 {
     // if conn passed and non-null but it's bad
     if ($connection && !is_a($connection, 'ToolkitApi\CW\ToolkitServiceCw')) {
@@ -2152,15 +2152,15 @@ function i5_data_area_read($name, $offsetOrConnection = null, $length = null, $c
 /**
  * Writes data to data area. Offset and length can be specified together, as a pair, or not at all.
  *
- * @param string               $name               Name of data area
- * @param string               $value              Data to write
- * @param int|ToolkitServiceCw $offsetOrConnection Offset a which to write data (omit to start from beginning) OR connection
- * @param int                  $length             Length of data to write. "If value is shorter than length it is padded to the length. If it's longer it is truncated."
- * @param ToolkitServiceCw     $connection
+ * @param string                $name               Name of data area
+ * @param string                $value              Data to write
+ * @param int|ToolkitServiceCw  $offsetOrConnection Offset a which to write data (omit to start from beginning) OR connection
+ * @param int                   $length             Length of data to write. "If value is shorter than length it is padded to the length. If it's longer it is truncated."
+ * @param ToolkitServiceCw|null $connection
  *
  * @return bool True on success, false on failure
  */
-function i5_data_area_write($name, $value, $offsetOrConnection = null, $length = null, ToolkitServiceCw $connection = null)
+function i5_data_area_write($name, $value, $offsetOrConnection = null, $length = null, ?ToolkitServiceCw $connection = null)
 {
     if (isset($length)) {
         // assume offset and length are both provided, since they come as a pair.
@@ -2949,12 +2949,12 @@ function i5_objects_list_close(&$list)
  *
  * @param $name
  * @param $description
- * @param int              $keySizeOrConnection
- * @param ToolkitServiceCw $connection
+ * @param int                   $keySizeOrConnection
+ * @param ToolkitServiceCw|null $connection
  *
  * @return \ToolkitApi\CW\DataDescription
  */
-function i5_dtaq_prepare($name, $description, $keySizeOrConnection = 0, ToolkitServiceCw $connection = null)
+function i5_dtaq_prepare($name, $description, $keySizeOrConnection = 0, ?ToolkitServiceCw $connection = null)
 {
     $keySize = 0; // init
     // user is allowed to omit $keySize, so there may be a variable number of parameters
