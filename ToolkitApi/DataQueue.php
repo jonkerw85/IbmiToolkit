@@ -11,7 +11,7 @@ class DataQueue
     private $DataQueueName;
     private $DataQueueLib;
     private $CPFErr = '0000000';
-    private $ErrMessage;
+    private $ErrMessage = null;
 
     /**
      * @param ToolkitInterface|null $ToolkitSrvObj
@@ -28,11 +28,19 @@ class DataQueue
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getError()
     {
         return $this->ErrMessage;
+    }
+
+    /**
+     * @return void
+     */
+    public function setError(string $error)
+    {
+        $this->ErrMessage = $error;
     }
 
     /**
@@ -63,7 +71,7 @@ class DataQueue
             strcmp(strtoupper($Sequence), '*LIFO') == 0) {
             $DataQType = $Sequence;
         } else {
-            return $this->SetError('Invalid Data Queue type parameter');
+            return $this->setError('Invalid Data Queue type parameter');
         }
 
         $KeyedSetting = '';
