@@ -144,15 +144,21 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * if passing an existing resource and naming, don't need the other params.
+     * Initializes a database connection with various transport methods.
      *
-     * @param string|resource|PDO $databaseNameOrResource
-     * @param string              $userOrI5NamingFlag     0 = DB2_I5_NAMING_OFF or 1 = DB2_I5_NAMING_ON
-     * @param string              $password
-     * @param string              $transportType          (http, ibm_db2, odbc, ssh, local)
-     * @param array|bool          $options                Connection options. bool is for just isPersistent (compatibility)
+     * Supports multiple connection types, including ibm_db2, odbc, pdo, ssh, http, and local.
+     * Allows reuse of existing connections or creation of new ones, handling persistent connections
+     * and configuration settings.
      *
-     * @throws \Exception
+     * If passing an existing resource and naming, other parameters are not required.
+     *
+     * @param string|resource|PDO|\Odbc\Connection $databaseNameOrResource database name, existing connection resource, PDO, or ODBC connection
+     * @param string                               $userOrI5NamingFlag     user name or IBM i naming flag (0 = OFF, 1 = ON)
+     * @param string                               $password               password for authentication (if required)
+     * @param string                               $transportType          connection method (http, ibm_db2, odbc, ssh, local)
+     * @param array|bool                           $options                connection options or persistence flag (for compatibility)
+     *
+     * @throws \Exception if connection fails due to invalid parameters or errors
      */
     public function __construct($databaseNameOrResource, $userOrI5NamingFlag = '0', $password = '', $transportType = '', $options = ['isPersistent' => false])
     {
@@ -317,7 +323,12 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * get service param values from Config to use in object.
+     * Retrieves default service parameters from the configuration.
+     *
+     * These parameters are used to configure the XML service library, debugging settings,
+     * encoding format, and testing options.
+     *
+     * @return array default service parameters
      */
     protected function getDefaultServiceParams()
     {
@@ -333,9 +344,13 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * get optional param values from Config and add them to the service params.
+     * Retrieves optional configuration values and adds them to service parameters.
      *
-     * @param $type
+     * This method checks for optional parameters in the configuration and, if found,
+     * adds them to the service parameters.
+     *
+     * @param string $type           The configuration section (e.g., 'system', 'transport').
+     * @param array  $optionalParams list of optional parameter names to retrieve
      */
     protected function getOptionalParams($type, array $optionalParams)
     {
@@ -351,9 +366,9 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * whether we're using CW (compatibility wrapper) or not.
+     * Sets whether the compatibility wrapper (CW) is in use.
      *
-     * @param $isCw
+     * @param bool $isCw true if CW is enabled, false otherwise
      */
     public function setIsCw($isCw)
     {
@@ -369,10 +384,12 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * return array of valid plug sizes.
-     * public method in case an application wishes to validate.
+     * Returns an array of valid plug sizes.
      *
-     * @return array
+     * This public method allows applications to validate plug sizes
+     * by retrieving the available options.
+     *
+     * @return array list of valid plug size keys
      */
     public function validPlugSizes()
     {
@@ -423,11 +440,15 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * Choose data transport type: ibm_db2, odbc, pdo, http, https, ssh, local.
+     * Sets the data transport type.
      *
-     * @param string $transportName 'ibm_db2' or 'odbc' or 'pdo' or 'http' or 'https' or 'ssh' or 'local'
+     * Determines and initializes the appropriate transport mechanism
+     * based on the given transport name. Supported transport types
+     * include: 'ibm_db2', 'odbc', 'pdo', 'http', 'https', 'ssh', and 'local'.
      *
-     * @throws \Exception
+     * @param string $transportName the transport type to use
+     *
+     * @throws \Exception if an invalid transport type is specified
      */
     protected function chooseTransport($transportName = '')
     {
@@ -514,7 +535,14 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * Also alias setOptions().
+     * Sets toolkit service parameters.
+     *
+     * This method updates the XMLService options for the toolkit,
+     * acting as an alias for setOptions(). It processes special cases
+     * such as sbmjobParams, plug options, encoding, and schema separators,
+     * ensuring valid values before applying them.
+     *
+     * @param array $XmlServiceOptions an associative array of service parameters
      */
     public function setToolkitServiceParams(array $XmlServiceOptions)
     {
@@ -605,14 +633,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * get a single option value
-     * return property value if property is set.
+     * Retrieves the value of a specified toolkit service parameter.
      *
-     * @param $optionName
+     * This method returns the value of a given option if it exists in the _options array.
+     * Special handling is applied for case-sensitive parameters like InternalKey.
      *
-     * @return bool
+     * @param string $optionName the name of the option to retrieve
      *
-     * @throws \Exception
+     * @return mixed the value of the requested option
+     *
+     * @throws \Exception if the requested option does not exist
      */
     public function getToolkitServiceParam($optionName)
     {
@@ -662,7 +692,11 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $stringToLog
+     * Logs a debug message if debugging is enabled.
+     *
+     * This method writes the given string to the debug log file if debugging is active.
+     *
+     * @param string $stringToLog the message to log
      */
     public function debugLog($stringToLog)
     {
@@ -690,11 +724,13 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * for special requests such as transport, performance, license.
+     * Handles special requests such as transport, performance, or license.
      *
-     * @param $callType
+     * This method processes different types of requests and returns the corresponding result.
      *
-     * @return array|bool
+     * @param string $callType The type of request to handle (e.g., 'transport', 'performance', 'license').
+     *
+     * @return array|bool the result of the request, which can be an array or a boolean value
      */
     public function specialCall($callType)
     {
@@ -732,15 +768,18 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * pgmCall.
+     * Calls a program on the IBM i (AS/400) system, passing input parameters and receiving output.
      *
-     * @param string       $pgmName     Name of program to call, without library
-     * @param string       $lib         Library of program. Leave blank to use library list or current library
-     * @param mixed[]|null $inputParam  an array of ProgramParameter objects OR XML representing params, to be sent as-is
-     * @param mixed[]|null $returnParam ReturnValue Array of one parameter that's the return value parameter
-     * @param mixed[]|null $options     Array of other options. The most popular is 'func' indicating the name of a subprocedure or function.
+     * This method interacts with the system to execute a program, sending parameters and receiving the return value or output.
+     * It also handles special requests, disconnects, and processes job logs for errors.
      *
-     * @return array|bool
+     * @param string       $pgmName     the name of the program to call (without the library)
+     * @param string       $lib         the library of the program (leave blank to use library list or current library)
+     * @param mixed[]|null $inputParam  an array of ProgramParameter objects or XML representing parameters to be passed to the program
+     * @param mixed[]|null $returnParam an array containing a single ProgramParameter object representing the return value
+     * @param mixed[]|null $options     additional options, such as 'func' for subprocedures or functions
+     *
+     * @return array|bool an array containing the output parameters or a boolean indicating success/failure
      */
     public function pgmCall($pgmName, $lib, $inputParam = null, $returnParam = null, $options = null)
     {
@@ -868,15 +907,18 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * Send any XML to XMLSERVICE toolkit. The XML doesn't have to represent a program.
-     * Was protected; made public to be usable by applications.
+     * Sends any XML to the XMLSERVICE toolkit. The XML doesn't have to represent a program.
+     * This method was originally protected, but has been made public for use by applications.
      *
-     * @param $inputXml
-     * @param bool $disconnect
+     * It verifies the internal key and plug name, and executes the program using the appropriate transport method (e.g., database, local, SSH, or HTTP).
+     * Additionally, debug logs are generated if the debug mode is enabled.
      *
-     * @return string
+     * @param string $inputXml   the XML input to be sent to the XMLSERVICE toolkit
+     * @param bool   $disconnect whether to disconnect after execution (default: false)
      *
-     * @throws \Exception
+     * @return string the result of the XMLSERVICE execution
+     *
+     * @throws \Exception if an error occurs during execution
      */
     public function ExecuteProgram($inputXml, $disconnect = false)
     {
@@ -956,13 +998,19 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param string $internalKey
-     * @param string $plugSize
-     * @param string $controlKeyString
-     * @param string $inputXml
-     * @param bool   $disconnect
+     * Makes a database call to execute a stored procedure using the specified parameters.
+     * The method constructs the SQL query based on the provided plug size and prefix, and executes the procedure
+     * using the database connection. If the debug mode is enabled, it logs relevant information about the execution.
      *
-     * @return string
+     * @param string $internalKey      the internal key to be passed to the stored procedure
+     * @param string $plugSize         the plug size, which is used to form the full plug name
+     * @param string $controlKeyString the control key string to be passed to the stored procedure
+     * @param string $inputXml         the XML input to be passed to the stored procedure
+     * @param bool   $disconnect       whether to disconnect from the database after execution (default: false)
+     *
+     * @return string the XML result from the stored procedure execution
+     *
+     * @throws \Exception if a database error occurs during the procedure call
      */
     protected function makeDbCall($internalKey, $plugSize, $controlKeyString, $inputXml, $disconnect = false)
     {
@@ -1085,15 +1133,17 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * Alias of ExecuteProgram();
-     * Send any XML to XMLSERVICE toolkit. The XML doesn't have to represent a program.
+     * Alias of the ExecuteProgram() method.
+     * Sends XML to the XMLSERVICE toolkit. The XML does not need to represent a program, and can be any valid XML for processing.
      *
-     * @todo create method to parse XML appropriately no matter what type of tags (cmd/pgm etc.)
+     * @todo Create a method to parse XML appropriately, regardless of the type of tags (cmd, pgm, etc.).
      *
-     * @param $inputXml
-     * @param bool $disconnect
+     * @param string $inputXml   the XML input to be sent to the XMLSERVICE toolkit
+     * @param bool   $disconnect whether to disconnect after execution (default is false)
      *
-     * @return string return output XML
+     * @return string the output XML received from the XMLSERVICE toolkit
+     *
+     * @throws \Exception if any error occurs during the execution or XML processing
      */
     public function sendXml($inputXml, $disconnect = false)
     {
@@ -1111,12 +1161,19 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param string $info      can be 'joblog' (joblog and additional info) or 'conf' (if custom config info set up in PLUGCONF)
-     * @param string $jobName
-     * @param string $jobUser
-     * @param string $jobNumber
+     * Retrieves diagnostic information from the XMLSERVICE toolkit.
+     * Can retrieve either joblog information or custom configuration information.
      *
-     * @return bool|void
+     * @param string $info      Specifies the type of information to retrieve.
+     *                          Can be 'joblog' (to get joblog and additional information) or 'conf' (to retrieve custom config info from PLUGCONF).
+     * @param string $jobName   The name of the job for which diagnostic information is to be retrieved. Optional.
+     * @param string $jobUser   The user associated with the job. Optional.
+     * @param string $jobNumber The job number. Optional.
+     *
+     * @return bool|void Returns false if an error occurs or no information is available; otherwise, returns parsed diagnostic data.
+     *                   If no diagnostics are available, the method returns false and sets the error code/message.
+     *
+     * @throws \Exception throws an exception if an error occurs while sending the XML or parsing the response
      */
     public function getDiagnostics($info = 'joblog', $jobName = '', $jobUser = '', $jobNumber = '')
     {
@@ -1175,14 +1232,17 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * Return version number of the local installation of XMLSERVICE, if available.
-     * Static because don't have to connect or instantiate toolkit object.
-     * Uses 'exec' command to retrieve local version number.
-     * Requires 1.8.0+ of XMLSERVICE and new program introduced with it: xmlver.pgm.
+     * Retrieves the version number of the local installation of XMLSERVICE, if available.
+     * This method is static because it does not require an instance of the toolkit object.
+     * Uses the exec command to call the xmlver.pgm program to retrieve the version.
+     * Requires XMLSERVICE version 1.8.0 or higher and the presence of the xmlver.pgm program.
      *
-     * @param $library
+     * @param string $library The library containing the xmlver.pgm program. Typically this will be the library where XMLSERVICE is installed.
      *
-     * @return string Version number (e.g. '1.8.0')
+     * @return string Returns the version number (e.g., '1.8.0') if successful, or an error message if it fails to retrieve the version.
+     *                The error message includes possible reasons for failure such as permission issues or incorrect library setup.
+     *
+     * @throws \Exception if there are issues with executing the command or retrieving the version
      */
     public static function getLocalBackEndVersion($library)
     {
@@ -1201,12 +1261,19 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * CLCommand.
+     * Executes a CL command on the system and returns the result.
+     * This method sends a command to the system via XML and processes the output.
+     * It supports various execution environments like PASE, REXX, and system commands.
      *
-     * @param array  $command string will be turned into an array
-     * @param string $exec    could be 'pase', 'pasecmd', 'system,' 'rexx', or 'cmd'
+     * @param array  $command The command to execute, passed as an array. This array will be converted into a string format.
+     * @param string $exec    Specifies the execution environment. Possible values are:
+     *                        'pase', 'pasecmd', 'system', 'rexx', or 'cmd'. Defaults to an empty string.
      *
-     * @return array|bool
+     * @return array|bool Returns an array of results if data is expected (e.g., in 'pase', 'pasecmd', or 'rexx' modes),
+     *                    or a boolean (true/false) indicating success or failure if no data is expected.
+     *                    In case of failure, the error code and message will be set in the object's properties.
+     *
+     * @throws \Exception if an error occurs while sending the command or processing the result
      */
     public function CLCommand($command, $exec = '')
     {
@@ -1411,15 +1478,21 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $type
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param string $varying
-     * @param int    $dimension
+     * Adds a parameter to the parameter list for a given operation.
+     * This method returns an associative array that represents the parameter's details such as type, input/output behavior,
+     * comment, variable name, value, and array dimension if applicable.
      *
-     * @return array
+     * @param string $type      The type of the parameter (e.g., storage type).
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param string $varying   Specifies whether the parameter is varying. Defaults to 'off'.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return array an associative array containing the details of the parameter:
+     *               'type' => $type, 'io' => $io, 'comment' => $comment, 'var' => $varName,
+     *               'data' => $value, 'varying' => $varying, 'dim' => $dimension
      */
     public static function AddParameter($type, $io, $comment, $varName = '', $value = '', $varying = 'off', $dimension = 0)
     {
@@ -1435,20 +1508,24 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $size
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param string $varying
-     * @param int    $dimension
-     * @param string $by
-     * @param bool   $isArray
-     * @param string $ccsidBefore
-     * @param string $ccsidAfter
-     * @param bool   $useHex
+     * Adds a character parameter to the parameter list and returns a CharParam object with the specified attributes.
+     * This method helps to create parameters for character type variables and provides additional options
+     * such as size, varying behavior, CCSID values, and whether the parameter is an array.
      *
-     * @return CharParam
+     * @param string $io          The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param int    $size        the size of the character parameter
+     * @param string $comment     a comment or description for the parameter
+     * @param string $varName     The name of the variable. Default is an empty string.
+     * @param string $value       The value of the parameter. Default is an empty string.
+     * @param string $varying     Specifies whether the parameter is varying. Defaults to 'off'.
+     * @param int    $dimension   The number of elements in the array (for array parameters). Default is 0.
+     * @param string $by          How the parameter is accessed (e.g., 'by'). Default is an empty string.
+     * @param bool   $isArray     Specifies if the parameter is an array. Default is false.
+     * @param string $ccsidBefore The CCSID (Character Set Identifier) before the transformation. Default is an empty string.
+     * @param string $ccsidAfter  The CCSID (Character Set Identifier) after the transformation. Default is an empty string.
+     * @param bool   $useHex      Specifies if the value should be represented in hexadecimal. Default is false.
+     *
+     * @return CharParam an instance of the CharParam class with the specified parameters
      */
     public static function AddParameterChar($io, $size , $comment, $varName = '', $value = '', $varying = 'off',$dimension = 0,
                                       $by = '', $isArray = false, $ccsidBefore = '', $ccsidAfter = '', $useHex = false)
@@ -1458,13 +1535,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds an Int32 parameter to the parameter list and returns an Int32Param object with the specified attributes.
+     * This method is used for creating parameters of type Int32.
      *
-     * @return Int32Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return Int32Param an instance of the Int32Param class with the specified parameters
      */
     public static function AddParameterInt32($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1472,11 +1552,14 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $comment
-     * @param string $varName
-     * @param $labelFindLen
+     * Adds a Size parameter to the parameter list and returns a SizeParam object with the specified attributes.
+     * This method is used for creating parameters of type Size, typically used for sizes and lengths.
      *
-     * @return SizeParam
+     * @param string $comment      a comment or description for the parameter
+     * @param string $varName      The name of the variable. Default is an empty string.
+     * @param int    $labelFindLen The length for label finding. Default is 0.
+     *
+     * @return SizeParam an instance of the SizeParam class with the specified parameters
      */
     public static function AddParameterSize($comment, $varName = '', $labelFindLen = 0)
     {
@@ -1484,11 +1567,14 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $comment
-     * @param string $varName
-     * @param $labelFindLen
+     * Adds a SizePack parameter to the parameter list and returns a SizePackParam object with the specified attributes.
+     * This method is used for creating parameters related to packed sizes.
      *
-     * @return SizePackParam
+     * @param string $comment      a comment or description for the parameter
+     * @param string $varName      The name of the variable. Default is an empty string.
+     * @param int    $labelFindLen The length for label finding. Default is 0.
+     *
+     * @return SizePackParam an instance of the SizePackParam class with the specified parameters
      */
     public static function AddParameterSizePack($comment, $varName = '', $labelFindLen = 0)
     {
@@ -1496,13 +1582,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds an Int8 parameter to the parameter list and returns an Int8Param object with the specified attributes.
+     * This method is used for creating parameters of type Int8.
      *
-     * @return Int8Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return Int8Param an instance of the Int8Param class with the specified parameters
      */
     public static function AddParameterInt8($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1510,13 +1599,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds an Int16 parameter to the parameter list and returns an Int16Param object with the specified attributes.
+     * This method is used for creating parameters of type Int16.
      *
-     * @return Int16Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return Int16Param an instance of the Int16Param class with the specified parameters
      */
     public static function AddParameterInt16($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1524,13 +1616,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds an Int64 parameter to the parameter list and returns an Int64Param object with the specified attributes.
+     * This method is used for creating parameters of type Int64.
      *
-     * @return Int64Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return Int64Param an instance of the Int64Param class with the specified parameters
      */
     public static function AddParameterInt64($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1538,13 +1633,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds an UInt8 parameter to the parameter list and returns a UInt8Param object with the specified attributes.
+     * This method is used for creating parameters of type UInt8.
      *
-     * @return UInt8Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return UInt8Param an instance of the UInt8Param class with the specified parameters
      */
     public static function AddParameterUInt8($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1552,13 +1650,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds a UInt16 parameter to the parameter list and returns a UInt16Param object with the specified attributes.
+     * This method is used for creating parameters of type UInt16.
      *
-     * @return UInt16Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return UInt16Param an instance of the UInt16Param class with the specified parameters
      */
     public static function AddParameterUInt16($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1566,13 +1667,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds a UInt32 parameter to the parameter list and returns a UInt32Param object with the specified attributes.
+     * This method is used for creating parameters of type UInt32.
      *
-     * @return UInt32Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return UInt32Param an instance of the UInt32Param class with the specified parameters
      */
     public static function AddParameterUInt32($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1580,13 +1684,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds a UInt64 parameter to the parameter list and returns a UInt64Param object with the specified attributes.
+     * This method is used for creating parameters of type UInt64.
      *
-     * @return UInt64Param
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return UInt64Param an instance of the UInt64Param class with the specified parameters
      */
     public static function AddParameterUInt64($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1594,13 +1701,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds a Float parameter to the parameter list and returns a FloatParam object with the specified attributes.
+     * This method is used for creating parameters of type Float.
      *
-     * @return FloatParam
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return FloatParam an instance of the FloatParam class with the specified parameters
      */
     public static function AddParameterFloat($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1608,13 +1718,16 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds a Real parameter to the parameter list and returns a RealParam object with the specified attributes.
+     * This method is used for creating parameters of type Real.
      *
-     * @return RealParam
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return RealParam an instance of the RealParam class with the specified parameters
      */
     public static function AddParameterReal($io, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1622,15 +1735,18 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $length
-     * @param $scale
-     * @param $comment
-     * @param string $varName
-     * @param mixed  $value
-     * @param int    $dimension
+     * Adds a Packed Decimal parameter to the parameter list and returns a PackedDecParam object with the specified attributes.
+     * This method is used for creating parameters of type Packed Decimal.
      *
-     * @return PackedDecParam
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param int    $length    the length of the packed decimal
+     * @param int    $scale     the scale of the packed decimal
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param mixed  $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return PackedDecParam an instance of the PackedDecParam class with the specified parameters
      */
     public static function AddParameterPackDec($io, $length, $scale, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1638,15 +1754,18 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $length
-     * @param $scale
-     * @param $comment
-     * @param string $varName
-     * @param mixed  $value
-     * @param int    $dimension
+     * Adds a Zoned parameter to the parameter list and returns a ZonedParam object with the specified attributes.
+     * This method is used for creating parameters of type Zoned Decimal.
      *
-     * @return ZonedParam
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param int    $length    the length of the zoned decimal
+     * @param int    $scale     the scale of the zoned decimal
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param mixed  $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return ZonedParam an instance of the ZonedParam class with the specified parameters
      */
     public static function AddParameterZoned($io, $length, $scale, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1654,12 +1773,12 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * "hole" parameter is for data to ignore.
+     * Adds a "hole" parameter to the parameter list. The hole parameter is used to ignore data during processing.
      *
-     * @param $size
-     * @param string $comment
+     * @param int    $size    the size of the hole parameter
+     * @param string $comment A comment or description for the hole parameter. Default is 'hole'.
      *
-     * @return HoleParam
+     * @return HoleParam an instance of the HoleParam class with the specified parameters
      */
     public static function AddParameterHole($size, $comment = 'hole')
     {
@@ -1667,14 +1786,17 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $io
-     * @param $size
-     * @param $comment
-     * @param string $varName
-     * @param string $value
-     * @param int    $dimension
+     * Adds a Binary parameter to the parameter list and returns a BinParam object with the specified attributes.
+     * This method is used for creating parameters of type Binary.
      *
-     * @return BinParam
+     * @param string $io        The input/output behavior of the parameter. Can be 'in', 'out', or 'both'.
+     * @param int    $size      the size of the binary parameter
+     * @param string $comment   a comment or description for the parameter
+     * @param string $varName   The name of the variable. Default is an empty string.
+     * @param string $value     The value of the parameter. Default is an empty string.
+     * @param int    $dimension The number of elements in the array (for array parameters). Default is 0.
+     *
+     * @return BinParam an instance of the BinParam class with the specified parameters
      */
     public static function AddParameterBin($io, $size, $comment, $varName = '', $value = '', $dimension = 0)
     {
@@ -1682,9 +1804,12 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param $array
+     * Adds an array of parameters by processing each element in the provided array and returning an array of parameter objects.
+     * This method constructs parameters using the `AddParameter` method based on the provided data.
      *
-     * @return array
+     * @param array $array an array of associative arrays, each containing data for a parameter (type, io, comment, var, data, varying, dim)
+     *
+     * @return array an array of parameter objects created by the `AddParameter` method
      */
     public static function AddParameterArray($array)
     {
@@ -1704,15 +1829,19 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * @param string   $name
-     * @param int      $dim
-     * @param string   $by
-     * @param bool     $isArray
-     * @param int|null $labelLen
-     * @param string   $comment
-     * @param string   $io
+     * Adds a new data structure by creating an instance of the DataStructure class with the specified parameters.
+     * This method is used to group parameters into a named data structure.
      *
-     * @return DataStructure
+     * @param array    $parameters an array of parameters to be included in the data structure
+     * @param string   $name       The name of the data structure. Default is 'struct_name'.
+     * @param int      $dim        The dimension of the data structure (e.g., for array types). Default is 0.
+     * @param string   $by         The way to handle the data structure. Default is an empty string.
+     * @param bool     $isArray    Indicates whether the data structure is an array. Default is false.
+     * @param int|null $labelLen   The length of the label. Default is null.
+     * @param string   $comment    A comment or description for the data structure. Default is an empty string.
+     * @param string   $io         The input/output behavior of the data structure. Default is 'both'.
+     *
+     * @return DataStructure an instance of the DataStructure class with the specified parameters
      */
     public static function AddDataStruct(array $parameters, $name = 'struct_name', $dim = 0, $by = '', $isArray = false, $labelLen = null, $comment = '', $io = 'both')
     {
@@ -2438,14 +2567,15 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * changeCurrentUser (1.5.0+)
-     * Changes the current user of the job to a specific user. All actions will be executed as this user from now on.
-     * Otherwise known as "swap user" or the misnomer "adopt authority.".
+     * Changes the current user of the job to a specific user, meaning all actions will be executed as this user from now on.
+     * This method is also known as "swap user" or the misnomer "adopt authority".
      *
-     * @param string $user     Generally should be uppercase
-     * @param string $password
+     * It takes the provided user and password, validates them using the `QSYGETPH` API to get the profile handle, then sets the user profile via the `QWTSETP` API, and finally releases the handle with the `QSYRLSPH` API.
      *
-     * @return bool True on success, False on failure
+     * @param string $user     The user profile name. Generally should be in uppercase.
+     * @param string $password the password for the specified user
+     *
+     * @return bool True on success, False on failure. Returns false if any errors occur in the process, such as invalid user or password.
      */
     public function changeCurrentUser($user, $password)
     {
@@ -2538,17 +2668,18 @@ class Toolkit implements ToolkitInterface
     }
 
     /**
-     * return value from toolkit config file, or a default value, or false if not found.
-     * method is static so that it can retain its value from call to call.
+     * Retrieves a configuration value from the toolkit config file, or returns a default value if the key is not found.
+     * If no default value is provided and the key is not found, it returns `false`.
+     * This method is static to allow it to retain its value across multiple calls within a request.
      *
-     * @todo store in Zend Data Cache to avoid reading during each request
-     * @todo change getConfigValue to allow getting many at one time
+     * @todo Store the config in Zend Data Cache to avoid reading the file on each request.
+     * @todo Modify the method to allow retrieving multiple configuration values at once.
      *
-     * @param $heading
-     * @param $key
-     * @param mixed|null $default
+     * @param string     $heading the section of the configuration file (INI format)
+     * @param string     $key     the specific key within the given section of the configuration file
+     * @param mixed|null $default Optional default value to return if the key is not found. Defaults to `null`.
      *
-     * @return bool|null
+     * @return mixed the configuration value corresponding to the key, or the default value, or `false` if not found
      */
     public static function getConfigValue($heading, $key, $default = null)
     {
